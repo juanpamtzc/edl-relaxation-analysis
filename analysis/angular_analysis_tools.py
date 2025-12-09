@@ -86,6 +86,12 @@ def compute_local_basis_unit_vectors(data, trj, oxygen_type, hydrogen_type, box_
     r_h1_rel = h1s - oxygens - np.round((h1s - oxygens) / box_size) * box_size
     r_h2_rel = h2s - oxygens - np.round((h2s - oxygens) / box_size) * box_size
 
+    if mode=="debug":
+        print("maximum oh1 length:")
+        print(np.max(np.linalg.norm(r_h1_rel,axis=2)))
+        print("maximum oh2 length:")
+        print(np.max(np.linalg.norm(r_h2_rel,axis=2)))
+
     # find the local basis unit vectors for each water molecule:
     #   (a) is parallel to the dipole vector, going from the oxygen to betwenn both hydrogen
     #   (b) is perpendicular to (a) and in the direction of the normal vector of the molecular plane (uses vector from oxygen to one of the two hydrogens to define the molecular plane)
