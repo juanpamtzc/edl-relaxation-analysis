@@ -65,7 +65,6 @@ def arrange_trj_data_by_molecules(data,trj,oxygen_type,hydrogen_type,global2loca
         
     return oxygens, h1s, h2s
 
-
 # This function calculates the center of mass (COM) positions and velocities for water molecules
 # WARNING: this assumes that there is a function that decomposes the entire trajectory data into just the data of the oxygens and the hydrogens of water.
 def COM_trj(positions_oxygens,positions_h1s,positions_h2s,velocities_oxygens,velocities_h1s,velocities_h2s,data,hydrogen_type,oxygen_type):
@@ -77,4 +76,27 @@ def COM_trj(positions_oxygens,positions_h1s,positions_h2s,velocities_oxygens,vel
 
     return positions_COM, velocities_COM
 
+def compute_local_basis_unit_vectors(data, trj, oxygen_type, hydrogen_type, box_size, global2local=None):
 
+    # use arrange_trj_data_by_molecules to get the positions of the oxygens and hydrogens
+    # refer to the documentation and comments of that function (it's in this same script) for more details
+    oxygens, h1s, h2s = arrange_trj_data_by_molecules(data,trj,oxygen_type,hydrogen_type,global2local=global2local)
+
+    # Find the vectors from each hydrogen to its corresponding oxygen, applying minimum image convention (most simulations will have periodic boundary conditions, and if the boundary conditions are not periodic it won't affect the behavior of the code)
+    r_h1_rel = h1s - oxygens - np.round((h1s - oxygens) / box_size) * box_size
+    r_h2_rel = h2s - oxygens - np.round((h2s - oxygens) / box_size) * box_size
+
+    # find the local basis unit vectors for each water molecule:
+    #   (a) is parallel to the dipole vector, going from the oxygen to betwenn both hydrogen
+    #   (b) is perpendicular to (a) and in the direction of the normal vector of the molecular plane (uses vector from oxygen to one of the two hydrogens to define the molecular plane)
+    #   (c) is perpendicular to both (a) and (b)
+    a = r_h1_rel+r_h2_rel
+    a = np.divide(a, np.linalg.norm(a,axis=2,keepdims=True), where=np.linalg.norm(a,axis=2,keepdims=True) != 0)  # Avoid division by zero (set to 0 where norm is zero)
+
+    b = np.cross(r_h1_rel,a,axis=2)
+    b = np.divide(b, np.linalg.norm(b,axis=2,keepdims=True), where=np.linalg.norm(b,axis=2,keepdims=True) != 0)  # Avoid division by zero (set to 0 where norm is zero)
+
+    c = np.cross(a,b,axis=2)
+    c = np.divide(c, np.linalg.norm(c,axis=2,keepdims=True), where=np.linalg.norm(c,axis=2,keepdims=True) != 0)  # Avoid division by zero (set to 0 where norm is zero)
+
+    return a, b, c, oxygens, h1s, h2s
