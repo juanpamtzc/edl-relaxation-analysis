@@ -6,23 +6,23 @@ import matplotlib.pyplot as plt
 def plot_average_property_over_time(positions, property_array, zlo=0.0, zhi=20.0, dt=1.0,component=None,plot_prefix="average_property_vs_time"):
 
     # Extract z coordinates
-    zvals = positions[:, :, 2]
+    z_coordinates = positions[:, :, 2]
 
     # Boolean mask of atoms inside region at each timestep
-    inside = (zvals >= zlo) & (zvals < zhi)
+    inside_region_mask = (z_coordinates >= zlo) & (z_coordinates < zhi)
 
     # Extract property values for atoms in the region
     if component is None:
         # magnitude of vector
-        prop_vals = np.linalg.norm(property_array, axis=2)
+        property_desired_components = np.linalg.norm(property_array, axis=2)
     else:
-        prop_vals = property_array[:, :, component]
+        property_desired_components = property_array[:, :, component]
 
     # Mask out atoms outside the region
-    masked_vals = np.where(inside, prop_vals, np.nan)
+    property_desired_components_inside_region = np.where(inside_region_mask, property_desired_components, np.nan)
 
     # Average over atoms for each timestep (ignoring NaNs)
-    avg_over_time = np.nanmean(masked_vals, axis=1)
+    avg_over_time = np.nanmean(property_desired_components_inside_region, axis=1)
 
     # Time axis
     n_steps = positions.shape[0]
@@ -38,3 +38,132 @@ def plot_average_property_over_time(positions, property_array, zlo=0.0, zhi=20.0
     plt.tight_layout()
     plt.savefig(f"{plot_prefix}.png")
     plt.close()
+
+# This function plots the probability distribution of velocities for atoms inside a specified region along the z-axis
+# This can help in assessing whether or not the use of an equilibrium thermostat in that region is appropriate
+# FUTURE WORK: Add support for regions inside a region that does not span the x-y plane
+def plot_velocity_distribution_in_region(positions, velocities, zlo=0.0, zhi=20.0, component=None, bins=50, plot_prefix="velocity_distribution"):
+
+    # Extract z coordinates
+    z_coordinates = positions[:, :, 2]
+    
+    # Boolean mask of atoms inside region at each timestep
+    inside_region_mask = (z_coordinates >= zlo) & (z_coordinates < zhi)
+    
+    # Extract velocity values
+    if component is None:
+        # Speed (magnitude of velocity vector)
+        velocities_desired_components = np.linalg.norm(velocities, axis=2)
+    else:
+        velocities_desired_components = velocities[:, :, component]
+    
+    # Flatten and extract only velocities of atoms inside the region
+    # This is efficient: we flatten both arrays and use the flattened mask
+    velocities_desired_components_inside_region = velocities_desired_components[inside_region_mask]
+    
+    # Plot histogram (probability distribution) of velocities
+    plt.figure(figsize=(8, 6))
+    counts, bins, _ = plt.hist(velocities_desired_components_inside_region, bins=bins, density=True, 
+                                alpha=0.7, edgecolor='black')
+    
+    # Labels
+    if component is None:
+        plt.xlabel("Speed")
+        plt.ylabel("Probability Density")
+        plt.title(f"Speed Distribution in Region [{zlo}, {zhi}]")
+    else:
+        comp_label = ['vx', 'vy', 'vz'][component]
+        plt.xlabel(f"Velocity Component {comp_label}")
+        plt.ylabel("Probability Density")
+        plt.title(f"{comp_label} Distribution in Region [{zlo}, {zhi}]")
+    
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(f"{plot_prefix}.png", dpi=150)
+    plt.close()
+    
+    return velocities_desired_components_inside_region
+
+# This function plots the average (over all molecules in a region) cosine of the angle between the molecular local unit basis vectors and the z-axis as a function of time
+def plot_average_cos_over_time(positions,cos_array,zlo=0.0,zhi=20.0,dt=1.0,plot_prefix="average_cos_vs_time"):
+
+    # Extract z-coordinates
+    z_coordinates = positions[:, :, 2]
+
+    # Boolean mask selecting atoms inside region at each timestep
+    inside_region_mask = (z_coordinates >= zlo) & (z_coordinates < zhi)
+
+    # Mask cosine values outside region (→ NaN)
+    cosine_inside_region = np.where(inside_region_mask, cos_array, np.nan)
+
+    # Average cosine per timestep, ignoring NaNs
+    avg_cosine_inside_region = np.nanmean(cosine_inside_region, axis=1)
+
+    # Time axis
+    n_steps = positions.shape[0]
+    time = np.arange(n_steps) * dt
+
+    # Plot
+    plt.figure(figsize=(8, 6))
+    plt.plot(time, avg_cosine_inside_region)
+    plt.xlabel("Time")
+    plt.ylabel("Average cos(θ)")
+    plt.title(f"Average cos(θ) in Region [{zlo}, {zhi}] vs Time")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(f"{plot_prefix}.png")
+    plt.close()
+
+# This function computes and plots the average (over all water molecules) translational and rotational kinetic energy components as a function of time
+# FUTURE WORK: Add support for angular_velocities being found with backward or forward difference, right now it assumes central difference
+def water_kinetic_energy(com_positions, com_velocities, angular_velocities, plot=True, plot_prefix='water_kinetic_energy'):
+   
+    n_timesteps, n_molecules, _ = com_positions.shape
+
+    translational_ke = 0.5 * np.sum(com_velocities**2, axis=2)  # shape: (T, M)
+    translational_ke_x = 0.5 * com_velocities[:,:,0]**2
+    translational_ke_y = 0.5 * com_velocities[:,:,1]**2
+    translational_ke_z = 0.5 * com_velocities[:,:,2]**2
+    rotational_ke = 0.5 * np.sum(angular_velocities**2, axis=2)  # shape: (T, M)
+    rotational_ke_a = 0.5 * angular_velocities[:,:,0]**2
+    rotational_ke_b = 0.5 * angular_velocities[:,:,1]**2
+    rotational_ke_c = 0.5 * angular_velocities[:,:,2]**2
+
+    average_translational_ke = np.mean(translational_ke, axis=1)  # shape: (T,)
+    average_translational_ke_x = np.mean(translational_ke_x, axis=1)
+    average_translational_ke_y = np.mean(translational_ke_y, axis=1)
+    average_translational_ke_z = np.mean(translational_ke_z, axis=1)
+    average_rotational_ke = np.mean(rotational_ke, axis=1)  # shape: (T,)
+    average_rotational_ke_a = np.mean(rotational_ke_a, axis=1)
+    average_rotational_ke_b = np.mean(rotational_ke_b, axis=1)
+    average_rotational_ke_c = np.mean(rotational_ke_c, axis=1)
+
+    average_translational_ke = np.mean(translational_ke, axis=1)/average_translational_ke[0]  # shape: (T,)
+    average_translational_ke_x = np.mean(translational_ke_x, axis=1)/average_translational_ke_x[0]
+    average_translational_ke_y = np.mean(translational_ke_y, axis=1)/average_translational_ke_y[0]
+    average_translational_ke_z = np.mean(translational_ke_z, axis=1)/average_translational_ke_z[0]
+    average_rotational_ke = np.mean(rotational_ke, axis=1)/average_rotational_ke[0]  # shape: (T,)
+    average_rotational_ke_a = np.mean(rotational_ke_a, axis=1)/average_rotational_ke_a[0]
+    average_rotational_ke_b = np.mean(rotational_ke_b, axis=1)/average_rotational_ke_b[0]
+    average_rotational_ke_c = np.mean(rotational_ke_c, axis=1)/average_rotational_ke_c[0]
+
+    if plot:
+        time = np.arange(n_timesteps)
+        time = time[1:-1]
+
+        plt.figure(figsize=(8, 6))
+        plt.plot(time, average_translational_ke[1:-1], label='Translational KE', color='blue')
+        plt.plot(time, average_translational_ke_x[1:-1], label='Translational KE X', color='cyan', linestyle=':')
+        plt.plot(time, average_translational_ke_y[1:-1], label='Translational KE Y', color='dodgerblue', linestyle='--')
+        plt.plot(time, average_translational_ke_z[1:-1], label='Translational KE Z', color='navy', linestyle='-.')
+        plt.plot(time, average_rotational_ke, label='Rotational KE', color='orange')
+        plt.plot(time, average_rotational_ke_a, label='Rotational KE A', color='gold', linestyle=':')
+        plt.plot(time, average_rotational_ke_b, label='Rotational KE B', color='darkorange', linestyle='--')
+        plt.plot(time, average_rotational_ke_c, label='Rotational KE C', color='orangered', linestyle='-.')
+        plt.xlabel('Time')
+        plt.ylabel('Kinetic Energy')
+        plt.title('Average Kinetic Energy of Water Molecules over Time')
+        plt.legend()
+        plt.grid()
+        plt.savefig(f'{plot_prefix}_kinetic_energy.png')
+        plt.close()
