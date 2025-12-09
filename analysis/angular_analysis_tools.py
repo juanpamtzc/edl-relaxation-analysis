@@ -12,8 +12,6 @@ def arrange_trj_data_by_molecules(data,trj,oxygen_type,hydrogen_type,global2loca
     H1S = {}
     H2S = {}
     N_water_molecules = 0
-    local_molecule_id=0
-    molecule_id_map={}
 
     for atom in data["Atoms"]:
         atom_2_molecule[atom] = data["Atoms"][atom]["molecule ID"]
