@@ -76,7 +76,7 @@ def COM_trj(positions_oxygens,positions_h1s,positions_h2s,velocities_oxygens,vel
 
     return positions_COM, velocities_COM
 
-def compute_local_basis_unit_vectors(data, trj, oxygen_type, hydrogen_type, box_size, global2local=None):
+def compute_local_basis_unit_vectors(data, trj, oxygen_type, hydrogen_type, box_size, global2local=None, mode="debug"):
 
     # use arrange_trj_data_by_molecules to get the positions of the oxygens and hydrogens
     # refer to the documentation and comments of that function (it's in this same script) for more details
@@ -98,5 +98,27 @@ def compute_local_basis_unit_vectors(data, trj, oxygen_type, hydrogen_type, box_
 
     c = np.cross(a,b,axis=2)
     c = np.divide(c, np.linalg.norm(c,axis=2,keepdims=True), where=np.linalg.norm(c,axis=2,keepdims=True) != 0)  # Avoid division by zero (set to 0 where norm is zero)
+
+    # include a debug statement to check that the unit vectors are properly normalized and orthogonal
+    # CHECKS
+    if mode=="debug":
+        print("a:")
+        print(a[0,0,:])
+        print("norm(a):\t***should be within machine precision of 1***")
+        print(np.linalg.norm(a[0,0,:]))
+        print("b:")
+        print(b[0,0,:])
+        print("norm(b):")
+        print(np.linalg.norm(b[0,0,:]))
+        print("c:")
+        print(c[0,0,:])
+        print("norm(c):\t***should be within machine precision of 1***")
+        print(np.linalg.norm(c[0,0,:]))
+        print("a dot b:\t***should be within machine precision of 0***")
+        print(np.dot(a[0,0,:],b[0,0,:]))
+        print("b dot c:\t***should be within machine precision of 0***")
+        print(np.dot(b[0,0,:],c[0,0,:]))
+        print("c dot a:\t***should be within machine precision of 0***")
+        print(np.dot(a[0,0,:],c[0,0,:]))
 
     return a, b, c, oxygens, h1s, h2s
