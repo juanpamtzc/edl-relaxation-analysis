@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 # This function uses the data dictionary and the trajectory array to arrange the trajectory data by water molecules
 # NOTE: this function does NOT assume that there is only trajectory data for the water molecules, it can handle trajectory data that has more types of atoms
@@ -128,3 +128,111 @@ def compute_local_basis_unit_vectors(data, trj, oxygen_type, hydrogen_type, box_
         print(np.dot(a[0,0,:],c[0,0,:]))
 
     return a, b, c, oxygens, h1s, h2s
+
+# This function computes the time derivative of the local basis vectors a, b, c
+# It uses the central difference method by default, but can also use forward or backward difference methods
+def compute_de_dt(a,b,c,dt,style="central difference"):
+    M=a.shape[0]
+    da_dt=np.zeros(a.shape)
+    db_dt=np.zeros(b.shape)
+    dc_dt=np.zeros(c.shape)
+    if style=="backward difference":
+        da_dt[1:,:,:]=(a[1:,:,:]-a[:M-1,:,:])/dt
+        db_dt[1:,:,:]=(b[1:,:,:]-b[:M-1,:,:])/dt
+        dc_dt[1:,:,:]=(c[1:,:,:]-c[:M-1,:,:])/dt
+    elif style=="forward difference":
+        da_dt[:M-1,:,:]=(a[1:,:,:]-a[:M-1,:,:])/dt
+        db_dt[:M-1,:,:]=(b[1:,:,:]-b[:M-1,:,:])/dt
+        dc_dt[:M-1,:,:]=(c[1:,:,:]-c[:M-1,:,:])/dt
+    elif style=="central difference":
+        da_dt[1:M-1,:,:]=(a[2:,:,:]-a[:M-2,:,:])/(2*dt)
+        db_dt[1:M-1,:,:]=(b[2:,:,:]-b[:M-2,:,:])/(2*dt)
+        dc_dt[1:M-1,:,:]=(c[2:,:,:]-c[:M-2,:,:])/(2*dt)
+    return da_dt, db_dt, dc_dt
+
+# This function computes the angular velocity of the molecule based on the time derivative of the local basis vectors
+def compute_angular_velocity_from_basis_vectors(a,b,c,da_dt,db_dt,dc_dt,style="central difference"):
+    M=a.shape[0]
+    angular_velocities=np.zeros(a.shape)
+    angular_velocities[:,:,0]=np.sum(db_dt*c,axis=2)
+    angular_velocities[:,:,1]=np.sum(dc_dt*a,axis=2)
+    angular_velocities[:,:,2]=np.sum(da_dt*b,axis=2)
+    if style=="backward difference":
+        angular_velocities=angular_velocities[1:,:,:]
+    elif style=="forward difference":
+        angular_velocities=angular_velocities[:M-1,:,:]
+    elif style=="central difference":
+        angular_velocities=angular_velocities[1:M-1,:,:]
+    return angular_velocities
+
+# This function transforms the angular velocities from the local frame (a,b,c) to the lab frame (x,y,z)
+def transform_angular_velocities_to_lab_frame(angular_velocities, a, b, c, style="central difference"):
+    # Build rotation matrices R to go from local (a,b,c) to lab (x,y,z)
+    R = np.stack([a, b, c], axis=-1)  # shape (T, N, 3, 3)
+
+    if style == "central difference":
+        R = R[1:-1]  # match time steps with angular_velocities
+    elif style == "backward difference":
+        R = R[1:]
+    elif style == "forward difference":
+        R = R[:-1]
+
+    # Rotate local angular velocities to lab frame
+    angular_velocities_global = np.einsum('...ij,...j->...i', R, angular_velocities)
+    return angular_velocities_global
+
+# This function computes the time- and space-averaged angular distribution between local basis vectors a, b, c and the global z-axis
+def compute_angle_distribution_with_z(a, b, c, nbins=180, output_file=None, plot=False):
+    """
+    Compute the time- and space-averaged angular distribution between local basis vectors
+    a, b, c and the global z-axis. Optionally save and/or plot the result.
+
+    Parameters:
+    - a, b, c: Arrays of shape (T, N, 3), basis vectors over time and molecules
+    - nbins: Number of bins for histogram (default: 180 for 1-degree resolution)
+    - output_file: Path to save the output .txt file (optional)
+    - plot: If True, display a plot of the distributions
+
+    Returns:
+    - bin_centers: Midpoints of angle bins (in degrees)
+    - hist_a, hist_b, hist_c: Normalized histograms for vectors a, b, and c
+    """
+
+    def angle_with_z(vectors):
+        z = np.array([0, 0, 1])
+        cos_theta = np.clip(np.einsum('...i,i->...', vectors, z), -1.0, 1.0)
+        return np.degrees(np.arccos(cos_theta))  # angles in degrees
+
+    # Flatten time and molecule axes
+    angles_a = angle_with_z(a.reshape(-1, 3))
+    angles_b = angle_with_z(b.reshape(-1, 3))
+    angles_c = angle_with_z(c.reshape(-1, 3))
+
+    # Histogram for each set of angles
+    hist_a, bin_edges = np.histogram(angles_a, bins=nbins, range=(0, 180), density=True)
+    hist_b, _         = np.histogram(angles_b, bins=nbins, range=(0, 180), density=True)
+    hist_c, _         = np.histogram(angles_c, bins=nbins, range=(0, 180), density=True)
+
+    bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+
+    # Optionally save to .txt file
+    if output_file is not None:
+        header = "Angle_Degrees\tPDF_a\tPDF_b\tPDF_c"
+        output_data = np.column_stack((bin_centers, hist_a, hist_b, hist_c))
+        np.savetxt(output_file, output_data, fmt="%.6f", delimiter="\t", header=header)
+
+    # Optionally plot
+    if plot:
+        plt.figure(figsize=(7,5))
+        plt.plot(bin_centers, hist_a, label='a • z', lw=1.5)
+        plt.plot(bin_centers, hist_b, label='b • z', lw=1.5)
+        plt.plot(bin_centers, hist_c, label='c • z', lw=1.5)
+        plt.xlabel("Angle with z-axis (degrees)")
+        plt.ylabel("Probability Density")
+        plt.title("Angular Distribution with z-axis")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
+    return bin_centers, hist_a, hist_b, hist_c
