@@ -39,6 +39,8 @@ def plot_average_property_over_time(positions, property_array, zlo=0.0, zhi=20.0
     plt.savefig(f"{plot_prefix}.png")
     plt.close()
 
+    return time, avg_over_time
+
 # This function plots the probability distribution of velocities for atoms inside a specified region along the z-axis
 # This can help in assessing whether or not the use of an equilibrium thermostat in that region is appropriate
 # FUTURE WORK: Add support for regions inside a region that does not span the x-y plane
@@ -82,7 +84,7 @@ def plot_velocity_distribution_in_region(positions, velocities, zlo=0.0, zhi=20.
     plt.savefig(f"{plot_prefix}.png", dpi=150)
     plt.close()
     
-    return velocities_desired_components_inside_region
+    return bins, counts
 
 # This function plots the average (over all molecules in a region) cosine of the angle between the molecular local unit basis vectors and the z-axis as a function of time
 def plot_average_cos_over_time(positions,cos_array,zlo=0.0,zhi=20.0,dt=1.0,plot_prefix="average_cos_vs_time"):
@@ -181,12 +183,8 @@ def water_kinetic_energy(com_positions, com_velocities, angular_velocities, plot
     
     return time, average_translational_ke, average_translational_ke_x, average_translational_ke_y, average_translational_ke_z, average_rotational_ke, average_rotational_ke_a, average_rotational_ke_b, average_rotational_ke_c
     
-
+# This function plots the number density of atoms inside a specified region along the z-axis as a function of time
 def plot_region_density_over_time(positions, zlo=0.0, zhi=7.5, dt=1.0, cross_sectional_area=1.0, plot_prefix="density_vs_time"):
-    """
-    Plot number density inside region [zlo, zhi] as a function of timestep.
-    positions: array (n_steps, n_atoms, 3)
-    """
 
     # unpack
     n_steps = positions.shape[0]
