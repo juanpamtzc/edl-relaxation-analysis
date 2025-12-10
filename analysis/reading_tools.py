@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 # Function reads a .dat file and returns a dictionary with the information from the file
 def readDatFile(fileName):
@@ -875,3 +876,38 @@ def readTRJFile_stresses(fileName,output_IDMap=False,total_number_of_atoms=None)
         return TRJdata
     else:
         return TRJdata, local2global, global2local
+    
+# This function reads a LAMMPS thermodynamic output file and returns a pandas DataFrame with the data.
+def readLAMMPSThermodynamicFile(fileName):
+    header_line_idx = None
+    footer_line_idx = None
+
+    # first find header and footer lines
+    with open(fileName, 'r') as infile:
+        for i, line in enumerate(infile):
+            line_strip = line.strip()
+
+            # Detect header line
+            if line_strip.startswith("Step") and header_line_idx is None: # if we find a header AND have not yet found a header
+                header_line_idx = i
+                continue
+                
+            # Detect footer line
+            if header_line_idx is not None and line_strip.startswith("Loop time"):
+                footer_line_idx = i
+                break
+        
+    if header_line_idx is None:
+        raise ValueError("Could not find header line in the file.")
+    
+    if footer_line_idx is None:
+        raise ValueError("Could not find footer line in the file.")
+     
+    # Calculate the number of rows to read
+    nrows = (footer_line_idx - header_line_idx - 1)
+
+    # Now read the data using pandas with whitespace between columns
+    # Pandas is used here for convenience, since not all thermo files will have the same columns
+    df = pd.read_csv(fileName, sep=r'\s+', skiprows=header_line_idx, nrows=nrows, engine='c', memory_map=True)
+
+    return df
