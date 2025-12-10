@@ -711,3 +711,167 @@ def readTRJFile(fileName,output_IDMap=False,total_number_of_atoms=None):
         return TRJdata
     else:
         return TRJdata, local2global, global2local
+
+# Function reads a .trj file with per atom stress from LAMMPS and returns a numpy array with the stress trajectory info.
+# FUTURE WORK: combine this function with readTRJFile since there is a lot of redundance
+def readTRJFile_stresses(fileName,output_IDMap=False,total_number_of_atoms=None):
+    # Open trj file, read and store data, close the file.
+    print("Opening and reading file...\n")
+    print("Successfully read file.\n")
+
+    local_ID=0
+    local2global={}
+    global2local={}
+
+    # Initialize Boolean keys
+    timeStep=False
+    numOfAtoms=False
+    box=False
+    atoms=False
+
+    # Initialize data storage array
+    TRJdata=[]
+
+    tsCounter=0
+
+    if output_IDMap:
+        NUMBER_OF_ATOMS=[]
+        with open(fileName) as infile:
+            for line in infile:
+                # Detect TIMESTEP title line, turn on timeStep boolean key, turn off atoms boolean key
+                if "TIMESTEP" in line:
+                    timeStep=True
+                    atoms=False
+                # Detect NUMBER OF ATOMS line, turn on numOfAtoms boolean key, turn off timeStep boolean key
+                elif "NUMBER OF ATOMS" in line:
+                    numOfAtoms=True
+                    timeStep=False
+                # Detect BOX line, turn on box boolean key, turn off numOfAtoms boolean key
+                elif "BOX" in line:
+                    box=True
+                    numOfAtoms=False
+                    # initialize counter at 0 to store box size in correct dimmension (x=0,y=1,z=1)
+                    counter=0
+                # Detect ATOMS id line, turn on atoms boolean key, turn off box boolean key
+                elif "ITEM: ATOMS id" in line:
+                    atoms=True
+                    box=False
+                    # initialize counter at 0 to initialize "atoms" subdictionary when reading the first atom
+                    counter=0
+                # If the numOfAtoms boolean key is on, read and store the number of atoms
+                elif numOfAtoms:
+                    natoms=line.split()
+                    natoms=''.join(natoms)
+                    natoms=int(natoms)
+                    NUMBER_OF_ATOMS.append(natoms)
+                elif atoms:
+                    id,atype,xx,yy,zz,xy,xz,yz=line.split()
+                    id=int(id)
+                    if output_IDMap:
+                        if id not in global2local:
+                            #print("global id "+str(id)+"not in global2local...")
+                            local_ID+=1
+                            #print("\tAssigning local id "+str(local_ID)+" to "+str(id))
+                            global2local[id]=local_ID
+                            local2global[local_ID]=id
+                    elif not output_IDMap:
+                        global2local[id]=id
+                        local2global[id]=id
+
+        print("max number of atoms: "+str(max(NUMBER_OF_ATOMS)))
+        print("max local atom id "+str(local_ID))
+
+
+
+    with open(fileName) as infile:
+        for line in infile:
+            # Detect TIMESTEP title line, turn on timeStep boolean key, turn off atoms boolean key
+            if "TIMESTEP" in line:
+                timeStep=True
+                if tsCounter>0:
+                    TRJdata.append(trajectory)
+                tsCounter+=1
+                #if tsCounter%10==0:
+                #print("\tTS Lines Read: "+str(tsCounter)+"\n")
+                atoms=False
+            # Detect NUMBER OF ATOMS line, turn on numOfAtoms boolean key, turn off timeStep boolean key
+            elif "NUMBER OF ATOMS" in line:
+                numOfAtoms=True
+                timeStep=False
+            # Detect BOX line, turn on box boolean key, turn off numOfAtoms boolean key
+            elif "BOX" in line:
+                box=True
+                numOfAtoms=False
+                # initialize counter at 0 to store box size in correct dimmension (x=0,y=1,z=1)
+                counter=0
+            # Detect ATOMS id line, turn on atoms boolean key, turn off box boolean key
+            elif "ITEM: ATOMS id" in line:
+                atoms=True
+                box=False
+                # initialize counter at 0 to initialize "atoms" subdictionary when reading the first atom
+                counter=0
+            # If the timeStep boolean key is on, read and store the timestep
+            elif timeStep:
+                timestep=line.split()
+                timestep=''.join(timestep)
+                timestep=int(timestep)
+            # If the numOfAtoms boolean key is on, read and store the number of atoms
+            elif numOfAtoms:
+                natoms=line.split()
+                natoms=''.join(natoms)
+                natoms=int(natoms)
+            # If the box boolean key is on, check the counter to store under right direction (x=0,y=1,z=2)
+            elif box:
+                # if counter is zero, read and store xlo and xhi, and add one to the counter to move on to y
+                if counter==0:
+                    xlo,xhi=line.split()
+                    xlo=xlo.strip()
+                    xhi=xhi.strip()
+                    xlo=np.double(xlo)
+                    xhi=np.double(xhi)
+                    counter+=1
+                # if counter is one, read and store ylo and yhi, and add one to the counter to move on to z
+                elif counter==1:
+                    ylo,yhi=line.split()
+                    ylo=ylo.strip()
+                    yhi=yhi.strip()
+                    ylo=np.double(ylo)
+                    yhi=np.double(yhi)
+                    counter+=1
+                # if counter is two, read and store zlo and zhi (no need to add to counter, assume there will never be another line before atoms section header)
+                elif counter==2:
+                    zlo,zhi=line.split()
+                    zlo=zlo.strip()
+                    zhi=zhi.strip()
+                    zlo=np.double(zlo)
+                    zhi=np.double(zhi)
+            # if atoms boolean key is on, create "atoms" subdictionary on the first line, and read and store the id, type, x, y, z of each atom
+            elif atoms:
+                if counter==0:
+                    if not output_IDMap:
+                        number_of_atoms=natoms
+                    else:
+                        number_of_atoms=int(local_ID)
+                    trajectory=np.zeros((number_of_atoms, 8))
+                    counter+=1
+                id,atype,xx,yy,zz,xy,xz,yz=line.split()
+                id=int(id)
+
+                atype=int(atype)
+                xx=np.double(xx)
+                yy=np.double(yy)
+                zz=np.double(zz)
+                xy=np.double(xy)
+                xz=np.double(xz)
+                yz=np.double(yz)
+                #print("atom "+str(id)+" is : "+str(IDMap[id])+" , total atoms: "+str(natoms))
+                trajectory[global2local[id]-1]=[atype,xx,yy,zz,xy,xz,yz]
+        print("Array was successfully created.")
+        # after all lines have been read and stored appropriately, return data
+        print("Converting to numpy array...")
+        TRJdata=np.array(TRJdata)
+    
+    if not output_IDMap:
+        return TRJdata
+    else:
+        return TRJdata, local2global, global2local
