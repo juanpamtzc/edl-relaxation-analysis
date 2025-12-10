@@ -115,10 +115,10 @@ def plot_average_cos_over_time(positions,cos_array,zlo=0.0,zhi=20.0,dt=1.0,plot_
     plt.close()
 
 # This function computes and plots the average (over all water molecules) translational and rotational kinetic energy components as a function of time
-# FUTURE WORK: Add support for angular_velocities being found with backward or forward difference, right now it assumes central difference
-def water_kinetic_energy(com_positions, com_velocities, angular_velocities, plot=True, plot_prefix='water_kinetic_energy'):
+def water_kinetic_energy(com_positions, com_velocities, angular_velocities, plot=True, plot_prefix='water_kinetic_energy', style="central difference"):
    
     n_timesteps, n_molecules, _ = com_positions.shape
+    time = np.arange(n_timesteps)
 
     translational_ke = 0.5 * np.sum(com_velocities**2, axis=2)  # shape: (T, M)
     translational_ke_x = 0.5 * com_velocities[:,:,0]**2
@@ -147,15 +147,26 @@ def water_kinetic_energy(com_positions, com_velocities, angular_velocities, plot
     average_rotational_ke_b = np.mean(rotational_ke_b, axis=1)/average_rotational_ke_b[0]
     average_rotational_ke_c = np.mean(rotational_ke_c, axis=1)/average_rotational_ke_c[0]
 
-    if plot:
-        time = np.arange(n_timesteps)
-        time = time[1:-1]
+    
+    if style == "central difference":
+        time= time[1:-1]
+        average_translational_ke = average_translational_ke[1:-1]
+        average_translational_ke_x = average_translational_ke_x[1:-1]
+        average_translational_ke_y = average_translational_ke_y[1:-1]
+        average_translational_ke_z = average_translational_ke_z[1:-1]
+    elif style == "forward difference" or style == "backward difference":
+        time= time[:-1]
+        average_translational_ke = average_translational_ke[:-1]
+        average_translational_ke_x = average_translational_ke_x[:-1]
+        average_translational_ke_y = average_translational_ke_y[:-1]
+        average_translational_ke_z = average_translational_ke_z[:-1]
 
+    if plot:
         plt.figure(figsize=(8, 6))
-        plt.plot(time, average_translational_ke[1:-1], label='Translational KE', color='blue')
-        plt.plot(time, average_translational_ke_x[1:-1], label='Translational KE X', color='cyan', linestyle=':')
-        plt.plot(time, average_translational_ke_y[1:-1], label='Translational KE Y', color='dodgerblue', linestyle='--')
-        plt.plot(time, average_translational_ke_z[1:-1], label='Translational KE Z', color='navy', linestyle='-.')
+        plt.plot(time, average_translational_ke, label='Translational KE', color='blue')
+        plt.plot(time, average_translational_ke_x, label='Translational KE X', color='cyan', linestyle=':')
+        plt.plot(time, average_translational_ke_y, label='Translational KE Y', color='dodgerblue', linestyle='--')
+        plt.plot(time, average_translational_ke_z, label='Translational KE Z', color='navy', linestyle='-.')
         plt.plot(time, average_rotational_ke, label='Rotational KE', color='orange')
         plt.plot(time, average_rotational_ke_a, label='Rotational KE A', color='gold', linestyle=':')
         plt.plot(time, average_rotational_ke_b, label='Rotational KE B', color='darkorange', linestyle='--')
@@ -167,3 +178,42 @@ def water_kinetic_energy(com_positions, com_velocities, angular_velocities, plot
         plt.grid()
         plt.savefig(f'{plot_prefix}_kinetic_energy.png')
         plt.close()
+    
+    return time, average_translational_ke, average_translational_ke_x, average_translational_ke_y, average_translational_ke_z, average_rotational_ke, average_rotational_ke_a, average_rotational_ke_b, average_rotational_ke_c
+    
+
+def plot_region_density_over_time(positions, zlo=0.0, zhi=7.5, dt=1.0, cross_sectional_area=1.0, plot_prefix="density_vs_time"):
+    """
+    Plot number density inside region [zlo, zhi] as a function of timestep.
+    positions: array (n_steps, n_atoms, 3)
+    """
+
+    # unpack
+    n_steps = positions.shape[0]
+    height = zhi - zlo
+
+    # compute number of atoms in region at each timestep
+    # vectorized boolean mask
+    z_coordinates = positions[:, :, 2]
+    inside = (z_coordinates >= zlo) & (z_coordinates < zhi)
+    counts = inside.sum(axis=1)
+
+    # number density = N / volume
+    volume = cross_sectional_area * height
+    density = counts / volume
+
+    # time axis
+    time = np.arange(n_steps) * dt
+
+    # plot
+    plt.figure(figsize=(8, 6))
+    plt.plot(time, density)
+    plt.xlabel("Time")
+    plt.ylabel("Number Density (atoms / volume)")
+    plt.title(f"Number Density in Region [{zlo}, {zhi}] vs Time")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(f"{plot_prefix}.png")
+    plt.close()
+
+    return time, density
