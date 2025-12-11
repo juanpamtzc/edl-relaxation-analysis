@@ -1,4 +1,6 @@
 import numpy as np
+from analysis.plotting_tools import plot_time_series, plot_distribution_function
+# delete once no longer needed
 import matplotlib.pyplot as plt
 
 # This function computes the average property (velocity, force, etc.) inside a specified region along the z-axis
@@ -30,15 +32,21 @@ def compute_average_property_over_time(positions, property_array, zlo=0.0, zhi=2
 
     if plot:
         # Plot
-        plt.figure(figsize=(8, 6))
-        plt.plot(time, avg_over_time)
-        plt.xlabel("Time")
-        plt.ylabel("Average Property")
-        plt.title(f"Average Property in Region [{zlo}, {zhi}] vs Time")
-        plt.grid(True)
-        plt.tight_layout()
-        plt.savefig(f"{plot_prefix}.png")
-        plt.close()
+        plot_time_series(time, avg_over_time,
+                         title=f"Average Property in Region [{zlo}, {zhi}] vs Time",
+                         xlabel="Time",
+                         ylabel="Average Property",
+                         output_file=f"{plot_prefix}.png")
+        # DELETE IF NO LONGER NEEDED
+        #plt.figure(figsize=(8, 6))
+        #plt.plot(time, avg_over_time)
+        #plt.xlabel("Time")
+        #plt.ylabel("Average Property")
+        #plt.title(f"Average Property in Region [{zlo}, {zhi}] vs Time")
+        #plt.grid(True)
+        #plt.tight_layout()
+        #plt.savefig(f"{plot_prefix}.png")
+        #plt.close()
 
     return time, avg_over_time
 
