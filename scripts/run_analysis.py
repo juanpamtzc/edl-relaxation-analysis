@@ -2,6 +2,7 @@ import os
 import sys
 import yaml
 import numpy as np
+import pandas as pd
 
 # Get the absolute path of the directory containing the script (scripts/)
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -63,13 +64,16 @@ for run in runs:
     # read and process files
     trj, global2local, local2global, vel, force, stress, data, thermo_data = process_filename(trj_file,vel_file,force_file,stress_file,dat_file,thermo_file)
 
+    print("thermo_data headers:")
+    print(thermo_data.columns)
+
     # extract box size from data 
     box_size = [float(data["xhi"]) - float(data["xlo"]),
                 float(data["yhi"]) - float(data["ylo"]),
                 float(data["zhi"]) - float(data["zlo"])]
 
     # get basis vectors, positions of the oxygens, h1s and h2s
-    a,b,c,positions_oxygens,positions_h1s,positions_h2s = compute_local_basis_unit_vectors(data, trj, atom_types["oxygen"], atom_types["hydrogen"], box_size, global2local=None, mode="debug")
+    a,b,c,positions_oxygens,positions_h1s,positions_h2s = compute_local_basis_unit_vectors(data, trj, atom_types["oxygen"], atom_types["hydrogen"], box_size, global2local=global2local, mode="debug")
 
     # arrange velocities and forces by water molecules
     velocities_oxygens, velocities_h1s, velocities_h2s = arrange_trj_data_by_molecules(data, vel, atom_types["oxygen"], atom_types["hydrogen"], global2local=global2local)
