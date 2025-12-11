@@ -51,7 +51,7 @@ for run in runs:
     force_file = os.path.join(run_path, files['force'].format(run=run))
     stress_file = os.path.join(run_path, files['stress'].format(run=run))
 
-    dat_file = os.path.join(project_root, "data", files["data"])
+    dat_file = os.path.join(project_root, files["data"])
     thermo_file = os.path.join(project_root, "data", run + "_txt_files", files["thermo"].format(run=run))
 
     out_folder = os.path.join(project_root, output_config['base_folder'])
