@@ -13,7 +13,7 @@ if project_root not in sys.path:
 
 from analysis.data_processing_tools import process_filename
 from analysis.angular_analysis_tools import COM_trj, compute_local_basis_unit_vectors, arrange_trj_data_by_molecules, unwrap_trj
-from analysis.transient_analysis_tools import plot_region_density_over_time, compute_velocity_distribution
+from analysis.transient_analysis_tools import plot_region_density_over_time, compute_velocity_distribution_in_region
 
 
 # load configuration from YAML file

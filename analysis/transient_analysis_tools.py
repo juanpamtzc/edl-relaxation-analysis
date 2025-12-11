@@ -44,7 +44,7 @@ def plot_average_property_over_time(positions, property_array, zlo=0.0, zhi=20.0
 # This function plots the probability distribution of velocities for atoms inside a specified region along the z-axis
 # This can help in assessing whether or not the use of an equilibrium thermostat in that region is appropriate
 # FUTURE WORK: Add support for regions inside a region that does not span the x-y plane
-def plot_velocity_distribution_in_region(positions, velocities, zlo=0.0, zhi=20.0, component=None, bins=50, plot_prefix="velocity_distribution"):
+def compute_velocity_distribution_in_region(positions, velocities, zlo=0.0, zhi=20.0, component=None, bins=50, plot_prefix="velocity_distribution"):
 
     # Extract z coordinates
     z_coordinates = positions[:, :, 2]
