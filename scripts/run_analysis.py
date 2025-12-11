@@ -104,9 +104,9 @@ for run in runs:
     positions_COM, velocities_COM = COM_trj(positions_oxygens, positions_h1s, positions_h2s,velocities_oxygens, velocities_h1s, velocities_h2s,data, atom_types["hydrogen"], atom_types["oxygen"])
 
     # Density analysis
-    time, com_density = compute_region_density_over_time(positions_COM, zlo=region["zlo"], zhi=region["zhi"], dt=dt, cross_sectional_area=box_size[0]*box_size[1])
-    time, potassium_density = compute_region_density_over_time(positions_K, zlo=region["zlo"], zhi=region["zhi"], dt=dt, cross_sectional_area=box_size[0]*box_size[1])
-    time, chloride_density = compute_region_density_over_time(positions_Cl, zlo=region["zlo"], zhi=region["zhi"], dt=dt, cross_sectional_area=box_size[0]*box_size[1])
+    time, com_density = compute_region_density_over_time(positions_COM, zlo=region["zlo"], zhi=region["zhi"], dt=dt, cross_sectional_area=box_size[0]*box_size[1],plot=False)
+    time, potassium_density = compute_region_density_over_time(positions_K, zlo=region["zlo"], zhi=region["zhi"], dt=dt, cross_sectional_area=box_size[0]*box_size[1],plot=False)
+    time, chloride_density = compute_region_density_over_time(positions_Cl, zlo=region["zlo"], zhi=region["zhi"], dt=dt, cross_sectional_area=box_size[0]*box_size[1],plot=False)
     
     # collect densities for global averaging
     global_com_density.append(com_density)
