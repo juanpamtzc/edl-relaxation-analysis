@@ -3,6 +3,7 @@ import sys
 import yaml
 import numpy as np
 import pandas as pd
+import argparse
 
 # Get the absolute path of the directory containing the script (scripts/)
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -18,9 +19,16 @@ from analysis.transient_analysis_tools import compute_region_density_over_time, 
 from analysis.plotting_tools import plot_time_series, plot_distribution_function, plot_2d_heatmap
 
 # load configuration from YAML file
-config_path = os.path.normpath(os.path.join(project_root, "configs", "20_example.yaml"))
+parser = argparse.ArgumentParser(description="Run analysis with a specified YAML configuration file.")
+parser.add_argument("config", type=str, help="Path to the YAML configuration file")
+args = parser.parse_args()
+config_path = os.path.normpath(os.path.join(project_root, args.config))
 with open(config_path) as f:
     config = yaml.safe_load(f)
+
+#config_path = os.path.normpath(os.path.join(project_root, "configs", "20_example.yaml"))
+#with open(config_path) as f:
+#    config = yaml.safe_load(f)
 
 base_path = config['base_path']
 runs = config['runs']
