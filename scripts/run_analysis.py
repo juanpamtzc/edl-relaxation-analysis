@@ -14,7 +14,7 @@ if project_root not in sys.path:
 from analysis.data_processing_tools import process_filename
 from analysis.angular_analysis_tools import COM_trj, compute_local_basis_unit_vectors, arrange_trj_data_by_molecules, unwrap_trj
 from analysis.transient_analysis_tools import plot_region_density_over_time, compute_velocity_distribution_in_region
-
+from analysis.plotting_tools import plot_time_series, plot_distribution_function, plot_2d_heatmap
 
 # load configuration from YAML file
 config_path = os.path.normpath(os.path.join(project_root, "configs", "20_example.yaml"))
@@ -109,4 +109,9 @@ avg_chloride_density = np.mean(np.array(global_chloride_density), axis=0)
 std_com_density = np.std(np.array(global_com_density), axis=0)
 std_potassium_density = np.std(np.array(global_potassium_density), axis=0)
 std_chloride_density = np.std(np.array(global_chloride_density), axis=0)
+
+# plot averaged densities
+plot_time_series(time, avg_com_density, title="Average COM Density Over Time", xlabel="Time (ps)", ylabel="Density (molecules/Å²)", output_file=output_prefix+"_avg_com_density.png")
+plot_time_series(time, avg_potassium_density, title="Average Potassium Density Over Time", xlabel="Time (ps)", ylabel="Density (ions/Å²)", output_file=output_prefix+"_avg_potassium_density.png")
+plot_time_series(time, avg_chloride_density, title="Average Chloride Density Over Time", xlabel="Time (ps)", ylabel="Density (ions/Å²)", output_file=output_prefix+"_avg_chloride_density.png")
 
