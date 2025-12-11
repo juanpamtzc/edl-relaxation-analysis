@@ -11,6 +11,9 @@ project_root = os.path.join(script_dir, '..')
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
+cwd = os.getcwd()
+print(f"The current working directory is: {cwd}")
+
 from analysis.data_processing_tools import process_filename
 from analysis.angular_analysis_tools import COM_trj, compute_local_basis_unit_vectors, arrange_trj_data_by_molecules, unwrap_trj
 from analysis.transient_analysis_tools import plot_region_density_over_time, compute_velocity_distribution_in_region
