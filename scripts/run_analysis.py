@@ -12,7 +12,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from analysis.data_processing_tools import process_filename
-from analysis.angular_analysis_tools import COM_trj, compute_basis_vectors, arrange_trj_data_by_molecules, unwrap_trj
+from analysis.angular_analysis_tools import COM_trj, compute_local_basis_unit_vectors, arrange_trj_data_by_molecules, unwrap_trj
 from analysis.transient_analysis_tools import plot_region_density_over_time, compute_velocity_distribution
 
 
@@ -50,7 +50,7 @@ for run in runs:
     stress_file = os.path.join(run_path, files['stress'].format(run=run))
 
     dat_file = files["data"]
-    thermo_file = os.path.join("../data", run+"_txt_files", files["thermo"].format(run=run))
+    thermo_file = os.path.join("data", run+"_txt_files", files["thermo"].format(run=run))
 
     output_prefix = os.path.join(output_config["base_folder"],output_config["prefix"]+"_"+run)
 
@@ -63,7 +63,7 @@ for run in runs:
                 float(data["zhi"]) - float(data["zlo"])]
 
     # get basis vectors, positions of the oxygens, h1s and h2s
-    a,b,c,positions_oxygens,positions_h1s,positions_h2s = compute_basis_vectors(data, trj, atom_types["oxygen"], atom_types["hydrogen"], box_size, global2local=None, mode="debug")
+    a,b,c,positions_oxygens,positions_h1s,positions_h2s = compute_local_basis_unit_vectors(data, trj, atom_types["oxygen"], atom_types["hydrogen"], box_size, global2local=None, mode="debug")
 
     # arrange velocities and forces by water molecules
     velocities_oxygens, velocities_h1s, velocities_h2s = arrange_trj_data_by_molecules(data, vel, atom_types["oxygen"], atom_types["hydrogen"], global2local=global2local)
