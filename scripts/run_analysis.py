@@ -17,7 +17,7 @@ from analysis.transient_analysis_tools import plot_region_density_over_time, com
 
 
 # load configuration from YAML file
-with open("configs/analysis.yaml") as f:
+with open("configs/20_example.yaml") as f:
     config = yaml.safe_load(f)
 
 base_path = config['base_path']
