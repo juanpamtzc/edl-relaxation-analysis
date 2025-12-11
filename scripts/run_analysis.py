@@ -44,7 +44,7 @@ for run in runs:
     print("Processing run:\t"+run)
 
     # set up file paths from configuration
-    run_path = os.path.join(project_root, config['base_path'], run)
+    run_path = os.path.join(project_root, config['base_path']+ run)
 
     trj_file = os.path.join(run_path, files['trajectory'].format(run=run))
     vel_file = os.path.join(run_path, files['velocity'].format(run=run))
