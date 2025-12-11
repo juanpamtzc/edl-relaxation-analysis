@@ -853,7 +853,7 @@ def readTRJFile_stresses(fileName,output_IDMap=False,total_number_of_atoms=None)
                         number_of_atoms=natoms
                     else:
                         number_of_atoms=int(local_ID)
-                    trajectory=np.zeros((number_of_atoms, 8))
+                    trajectory=np.zeros((number_of_atoms, 7))
                     counter+=1
                 id,atype,xx,yy,zz,xy,xz,yz=line.split()
                 id=int(id)
