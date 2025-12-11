@@ -2,8 +2,8 @@
 base_path: "data/0.045Cpsqm_neg/20_"
 runs:
   - "A"
-  #- "B"
-  #- "C"
+  - "B"
+  - "C"
 
 files:
   trajectory: "process_0.045Cpsqm_neg_1.0M_KCl_20.lammpstrj"
@@ -22,7 +22,7 @@ atom_types:
   chloride: 5
 
 # --- Timestep size and FD scheme ---
-dt: 0.5
+dt: 1.0
 finite_difference_scheme: "central difference"
 
 # --- Analysis parameters ---
@@ -44,4 +44,4 @@ velocity_distribution:
 # --- Output ---
 output:
   base_folder: "results/"
-  prefix: "20_neg_"
+  prefix: "process_20_neg_"
