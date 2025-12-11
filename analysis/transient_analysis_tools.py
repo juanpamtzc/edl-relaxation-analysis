@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# This function plots the average property (velocity, force, etc.) inside a specified region along the z-axis
+# This function computes the average property (velocity, force, etc.) inside a specified region along the z-axis
 # FUTURE WORK: Add support for regions inside a region that does not span the x-y plane
-def plot_average_property_over_time(positions, property_array, zlo=0.0, zhi=20.0, dt=1.0,component=None,plot_prefix="average_property_vs_time"):
+def compute_average_property_over_time(positions, property_array, zlo=0.0, zhi=20.0, dt=1.0,component=None,plot=True,plot_prefix="average_property_vs_time"):
 
     # Extract z coordinates
     z_coordinates = positions[:, :, 2]
@@ -28,23 +28,24 @@ def plot_average_property_over_time(positions, property_array, zlo=0.0, zhi=20.0
     n_steps = positions.shape[0]
     time = np.arange(n_steps) * dt
 
-    # Plot
-    plt.figure(figsize=(8, 6))
-    plt.plot(time, avg_over_time)
-    plt.xlabel("Time")
-    plt.ylabel("Average Property")
-    plt.title(f"Average Property in Region [{zlo}, {zhi}] vs Time")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.savefig(f"{plot_prefix}.png")
-    plt.close()
+    if plot:
+        # Plot
+        plt.figure(figsize=(8, 6))
+        plt.plot(time, avg_over_time)
+        plt.xlabel("Time")
+        plt.ylabel("Average Property")
+        plt.title(f"Average Property in Region [{zlo}, {zhi}] vs Time")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(f"{plot_prefix}.png")
+        plt.close()
 
     return time, avg_over_time
 
-# This function plots the probability distribution of velocities for atoms inside a specified region along the z-axis
+# This function computes the probability distribution of velocities for atoms inside a specified region along the z-axis
 # This can help in assessing whether or not the use of an equilibrium thermostat in that region is appropriate
 # FUTURE WORK: Add support for regions inside a region that does not span the x-y plane
-def compute_velocity_distribution_in_region(positions, velocities, zlo=0.0, zhi=20.0, component=None, bins=50, plot_prefix="velocity_distribution"):
+def compute_velocity_distribution_in_region(positions, velocities, zlo=0.0, zhi=20.0, component=None, bins=50, plot=True, plot_prefix="velocity_distribution"):
 
     # Extract z coordinates
     z_coordinates = positions[:, :, 2]
@@ -63,31 +64,32 @@ def compute_velocity_distribution_in_region(positions, velocities, zlo=0.0, zhi=
     # This is efficient: we flatten both arrays and use the flattened mask
     velocities_desired_components_inside_region = velocities_desired_components[inside_region_mask]
     
-    # Plot histogram (probability distribution) of velocities
-    plt.figure(figsize=(8, 6))
-    counts, bins, _ = plt.hist(velocities_desired_components_inside_region, bins=bins, density=True, 
-                                alpha=0.7, edgecolor='black')
-    
-    # Labels
-    if component is None:
-        plt.xlabel("Speed")
-        plt.ylabel("Probability Density")
-        plt.title(f"Speed Distribution in Region [{zlo}, {zhi}]")
-    else:
-        comp_label = ['vx', 'vy', 'vz'][component]
-        plt.xlabel(f"Velocity Component {comp_label}")
-        plt.ylabel("Probability Density")
-        plt.title(f"{comp_label} Distribution in Region [{zlo}, {zhi}]")
-    
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(f"{plot_prefix}.png", dpi=150)
-    plt.close()
+    if plot:
+        # Plot histogram (probability distribution) of velocities
+        plt.figure(figsize=(8, 6))
+        counts, bins, _ = plt.hist(velocities_desired_components_inside_region, bins=bins, density=True, 
+                                    alpha=0.7, edgecolor='black')
+        
+        # Labels
+        if component is None:
+            plt.xlabel("Speed")
+            plt.ylabel("Probability Density")
+            plt.title(f"Speed Distribution in Region [{zlo}, {zhi}]")
+        else:
+            comp_label = ['vx', 'vy', 'vz'][component]
+            plt.xlabel(f"Velocity Component {comp_label}")
+            plt.ylabel("Probability Density")
+            plt.title(f"{comp_label} Distribution in Region [{zlo}, {zhi}]")
+        
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(f"{plot_prefix}.png", dpi=150)
+        plt.close()
     
     return bins, counts
 
-# This function plots the average (over all molecules in a region) cosine of the angle between the molecular local unit basis vectors and the z-axis as a function of time
-def plot_average_cos_over_time(positions,cos_array,zlo=0.0,zhi=20.0,dt=1.0,plot_prefix="average_cos_vs_time"):
+# This function computes the average (over all molecules in a region) cosine of the angle between the molecular local unit basis vectors and the z-axis as a function of time
+def compute_average_cos_over_time(positions,cos_array,zlo=0.0,zhi=20.0,dt=1.0,plot=True,plot_prefix="average_cos_vs_time"):
 
     # Extract z-coordinates
     z_coordinates = positions[:, :, 2]
@@ -105,19 +107,22 @@ def plot_average_cos_over_time(positions,cos_array,zlo=0.0,zhi=20.0,dt=1.0,plot_
     n_steps = positions.shape[0]
     time = np.arange(n_steps) * dt
 
-    # Plot
-    plt.figure(figsize=(8, 6))
-    plt.plot(time, avg_cosine_inside_region)
-    plt.xlabel("Time")
-    plt.ylabel("Average cos(θ)")
-    plt.title(f"Average cos(θ) in Region [{zlo}, {zhi}] vs Time")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.savefig(f"{plot_prefix}.png")
-    plt.close()
+    if plot:
+        # Plot
+        plt.figure(figsize=(8, 6))
+        plt.plot(time, avg_cosine_inside_region)
+        plt.xlabel("Time")
+        plt.ylabel("Average cos(θ)")
+        plt.title(f"Average cos(θ) in Region [{zlo}, {zhi}] vs Time")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(f"{plot_prefix}.png")
+        plt.close()
+    
+    return time, avg_cosine_inside_region
 
 # This function computes and plots the average (over all water molecules) translational and rotational kinetic energy components as a function of time
-def water_kinetic_energy(com_positions, com_velocities, angular_velocities, plot=True, plot_prefix='water_kinetic_energy', style="central difference"):
+def compute_water_kinetic_energy(com_positions, com_velocities, angular_velocities, plot=True, plot_prefix='water_kinetic_energy', style="central difference"):
    
     n_timesteps, n_molecules, _ = com_positions.shape
     time = np.arange(n_timesteps)
@@ -183,8 +188,8 @@ def water_kinetic_energy(com_positions, com_velocities, angular_velocities, plot
     
     return time, average_translational_ke, average_translational_ke_x, average_translational_ke_y, average_translational_ke_z, average_rotational_ke, average_rotational_ke_a, average_rotational_ke_b, average_rotational_ke_c
     
-# This function plots the number density of atoms inside a specified region along the z-axis as a function of time
-def plot_region_density_over_time(positions, zlo=0.0, zhi=7.5, dt=1.0, cross_sectional_area=1.0, plot_prefix="density_vs_time"):
+# This function computes the number density of atoms inside a specified region along the z-axis as a function of time
+def compute_region_density_over_time(positions, zlo=0.0, zhi=7.5, dt=1.0, cross_sectional_area=1.0, plot=True, plot_prefix="density_vs_time"):
 
     # unpack
     n_steps = positions.shape[0]
@@ -203,15 +208,16 @@ def plot_region_density_over_time(positions, zlo=0.0, zhi=7.5, dt=1.0, cross_sec
     # time axis
     time = np.arange(n_steps) * dt
 
-    # plot
-    plt.figure(figsize=(8, 6))
-    plt.plot(time, density)
-    plt.xlabel("Time")
-    plt.ylabel("Number Density (atoms / volume)")
-    plt.title(f"Number Density in Region [{zlo}, {zhi}] vs Time")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.savefig(f"{plot_prefix}.png")
-    plt.close()
+    if plot:
+        # plot
+        plt.figure(figsize=(8, 6))
+        plt.plot(time, density)
+        plt.xlabel("Time")
+        plt.ylabel("Number Density (atoms / volume)")
+        plt.title(f"Number Density in Region [{zlo}, {zhi}] vs Time")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(f"{plot_prefix}.png")
+        plt.close()
 
     return time, density
