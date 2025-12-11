@@ -1,5 +1,5 @@
 # --- Input files ---
-base_path: "data/0Cpsqm/20_"
+base_path: "data/0Cpsqm/60_"
 runs:
   - "A"
   - "B"
