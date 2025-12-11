@@ -38,6 +38,9 @@ out_folder = os.path.join(project_root, output_config['base_folder'])
 os.makedirs(out_folder, exist_ok=True)
 
 # Global arrays for averaging the results from individual runs
+global_com_density = []
+global_potassium_density = []
+global_chloride_density = []
 
 # loop over all the runs
 for run in runs:
@@ -92,4 +95,18 @@ for run in runs:
     time, com_density = plot_region_density_over_time(positions_COM, zlo=region["zlo"], zhi=region["zhi"], dt=dt, cross_sectional_area=box_size[0]*box_size[1])
     time, potassium_density = plot_region_density_over_time(positions_K, zlo=region["zlo"], zhi=region["zhi"], dt=dt, cross_sectional_area=box_size[0]*box_size[1])
     time, chloride_density = plot_region_density_over_time(positions_Cl, zlo=region["zlo"], zhi=region["zhi"], dt=dt, cross_sectional_area=box_size[0]*box_size[1])
-    print(chloride_density.shape)
+    
+    # collect densities for global averaging
+    global_com_density.append(com_density)
+    global_potassium_density.append(potassium_density)
+    global_chloride_density.append(chloride_density)
+
+# average densities over all runs
+avg_com_density = np.mean(np.array(global_com_density), axis=0)
+avg_potassium_density = np.mean(np.array(global_potassium_density), axis=0)
+avg_chloride_density = np.mean(np.array(global_chloride_density), axis=0)
+# standard deviation for error bars
+std_com_density = np.std(np.array(global_com_density), axis=0)
+std_potassium_density = np.std(np.array(global_potassium_density), axis=0)
+std_chloride_density = np.std(np.array(global_chloride_density), axis=0)
+
