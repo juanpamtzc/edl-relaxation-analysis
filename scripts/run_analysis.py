@@ -11,16 +11,14 @@ project_root = os.path.join(script_dir, '..')
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-cwd = os.getcwd()
-print(f"The current working directory is: {cwd}")
-
 from analysis.data_processing_tools import process_filename
 from analysis.angular_analysis_tools import COM_trj, compute_local_basis_unit_vectors, arrange_trj_data_by_molecules, unwrap_trj
 from analysis.transient_analysis_tools import plot_region_density_over_time, compute_velocity_distribution_in_region
 
 
 # load configuration from YAML file
-with open("configs/20_example.yaml") as f:
+config_path = os.path.normpath(os.path.join(project_root, "configs", "20_example.yaml"))
+with open(config_path) as f:
     config = yaml.safe_load(f)
 
 base_path = config['base_path']
@@ -36,7 +34,8 @@ velocity_distribution_config = config['velocity_distribution']
 output_config = config['output']
 
 # create output base directory if it doesn't exist
-os.makedirs(output_config['base_folder'], exist_ok=True)
+out_folder = os.path.join(project_root, output_config['base_folder'])
+os.makedirs(out_folder, exist_ok=True)
 
 # Global arrays for averaging the results from individual runs
 
@@ -45,17 +44,18 @@ for run in runs:
     print("Processing run:\t"+run)
 
     # set up file paths from configuration
-    run_path = (base_path+run).format(run=run)
+    run_path = os.path.join(project_root, config['base_path'], run)
 
     trj_file = os.path.join(run_path, files['trajectory'].format(run=run))
     vel_file = os.path.join(run_path, files['velocity'].format(run=run))
     force_file = os.path.join(run_path, files['force'].format(run=run))
     stress_file = os.path.join(run_path, files['stress'].format(run=run))
 
-    dat_file = files["data"]
-    thermo_file = os.path.join("data", run+"_txt_files", files["thermo"].format(run=run))
+    dat_file = os.path.join(project_root, "data", files["data"])
+    thermo_file = os.path.join(project_root, "data", run + "_txt_files", files["thermo"].format(run=run))
 
-    output_prefix = os.path.join(output_config["base_folder"],output_config["prefix"]+"_"+run)
+    out_folder = os.path.join(project_root, output_config['base_folder'])
+    output_prefix = os.path.join(out_folder, output_config["prefix"] + "_" + run)
 
     # read and process files
     trj, global2local, local2global, vel, force, stress, data, thermo_data = process_filename(trj_file,vel_file,force_file,stress_file,dat_file,thermo_file)
