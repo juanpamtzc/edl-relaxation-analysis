@@ -10,8 +10,8 @@ files:
   velocity: "process_0.045Cpsqm_neg_1.0M_KCl_20_vel.lammpstrj"
   force: "process_0.045Cpsqm_neg_1.0M_KCl_20_f.lammpstrj"
   stress: "process_0.045Cpsqm_neg_1.0M_KCl_20_stress_therm.lammpstrj"
-  data: "../data/data_files/0.045Cpsqm_neg_1.0M_KCl.dat"
-  thermo_directory: "../data/"
+  data: "data/data_files/0.045Cpsqm_neg_1.0M_KCl.dat"
+  thermo_directory: "data/"
   thermo: "20_neg.txt"
 
 # --- Atom types ---
@@ -43,5 +43,5 @@ velocity_distribution:
 
 # --- Output ---
 output:
-  base_folder: "../results/"
+  base_folder: "results/"
   prefix: "20_neg_"
