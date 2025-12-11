@@ -1,6 +1,16 @@
 import os
+import sys
 import yaml
 import numpy as np
+
+# Get the absolute path of the directory containing the script (scripts/)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the project root directory (the parent of scripts/)
+project_root = os.path.join(script_dir, '..')
+# Add the project root to sys.path so Python can find the 'analysis' package
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from analysis.data_processing_tools import process_filename
 from analysis.angular_analysis_tools import COM_trj, compute_basis_vectors, arrange_trj_data_by_molecules, unwrap_trj
 from analysis.transient_analysis_tools import plot_region_density_over_time, compute_velocity_distribution
