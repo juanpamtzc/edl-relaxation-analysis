@@ -878,9 +878,11 @@ def readTRJFile_stresses(fileName,output_IDMap=False,total_number_of_atoms=None)
         return TRJdata, local2global, global2local
     
 # This function reads a LAMMPS thermodynamic output file and returns a pandas DataFrame with the data.
-def readLAMMPSThermodynamicFile(fileName):
+def readLAMMPSThermodynamicFile(fileName,process_ID=1):
     header_line_idx = None
     footer_line_idx = None
+
+    current_process_ID = 0
 
     # first find header and footer lines
     with open(fileName, 'r') as infile:
@@ -889,8 +891,10 @@ def readLAMMPSThermodynamicFile(fileName):
 
             # Detect header line
             if line_strip.startswith("Step") and header_line_idx is None: # if we find a header AND have not yet found a header
-                header_line_idx = i
-                continue
+                current_process_ID += 1
+                if current_process_ID == process_ID:
+                    header_line_idx = i
+                    continue
                 
             # Detect footer line
             if header_line_idx is not None and line_strip.startswith("Loop time"):
