@@ -35,6 +35,7 @@ runs = config['runs']
 files = config['files']
 atom_types = config['atom_types']
 dt = config['dt']
+thermo_process_ID = config['thermo_process_ID']
 
 region = config['region']
 density_config = config['density']
@@ -73,7 +74,7 @@ for run in runs:
     output_prefix = os.path.join(out_folder, output_config["prefix"] + "_" + run)
 
     # read and process files
-    trj, global2local, local2global, vel, force, stress, data, thermo_data = process_filename(trj_file,vel_file,force_file,stress_file,dat_file,thermo_file)
+    trj, global2local, local2global, vel, force, stress, data, thermo_data = process_filename(trj_file,vel_file,force_file,stress_file,dat_file,thermo_file, thermo_process_ID=thermo_process_ID)
 
     print("thermo_data headers:")
     print(thermo_data.columns)
