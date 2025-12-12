@@ -3,6 +3,18 @@ from analysis.plotting_tools import plot_time_series, plot_distribution_function
 # delete once no longer needed
 import matplotlib.pyplot as plt
 
+# This function finds the z-coordinates of a representative carbon atom forming the lower wall over time
+def find_lower_wall_z_coordinates(trj, carbon_type, low_z):
+
+    # make a mask for carbon atoms below low_z
+    representative_carbon_mask = (trj[0,:,0]==carbon_type) & (trj[0,:,3]<low_z)
+    # get the index of the first representative carbon
+    representative_carbon_index = np.argmax(representative_carbon_mask)
+    # extract the z-coordinates of that representative carbon over time
+    representative_carbon_z_coordinates = trj[:,representative_carbon_index,3]
+
+    return representative_carbon_z_coordinates
+
 # This function computes the average property (velocity, force, etc.) inside a specified region along the z-axis
 # FUTURE WORK: Add support for regions inside a region that does not span the x-y plane
 def compute_average_property_over_time(positions, property_array, zlo=0.0, zhi=20.0, dt=1.0,component=None,plot=True,plot_prefix="average_property_vs_time"):
