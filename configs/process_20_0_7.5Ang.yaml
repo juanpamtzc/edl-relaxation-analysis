@@ -16,6 +16,7 @@ files:
 
 # --- Atom types ---
 atom_types:
+  carbon: 1
   oxygen: 2
   hydrogen: 3
   potassium: 4
@@ -40,6 +41,9 @@ velocity_distribution:
   zhi: 60.0
   component: 0
   bins: 50
+
+carbon_positions:
+  zlo: 5.0
 
 # --- Output ---
 output:
