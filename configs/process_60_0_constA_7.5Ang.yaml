@@ -1,0 +1,54 @@
+# --- Input files ---
+base_path: "data/0Cpsqm/60_"
+runs:
+  - "A"
+  - "B"
+  - "C"
+
+files:
+  trajectory: "process_0Cpsqm_1.0M_KCl_60_constA_.lammpstrj"
+  velocity: "process_0Cpsqm_1.0M_KCl_60_constA__vel.lammpstrj"
+  force: "process_0Cpsqm_1.0M_KCl_60_constA__f.lammpstrj"
+  stress: "process_0Cpsqm_1.0M_KCl_60_constA__stress_therm.lammpstrj"
+  data: "data/data_files/0Cpsqm_1.0M_KCl.dat"
+  thermo_directory: "data/"
+  thermo: "60_0_constA.txt"
+
+# --- thermodynamic output reading parameters ---
+thermo_process_ID: 2
+
+# --- Atom types ---
+atom_types:
+  carbon: 1
+  oxygen: 2
+  hydrogen: 3
+  potassium: 4
+  chloride: 5
+
+# --- Timestep size and FD scheme ---
+dt: 1.0
+finite_difference_scheme: "central difference"
+
+# --- Analysis parameters ---
+region:
+  zlo: 0.0
+  zhi: 7.5
+
+density:
+  bin_size: 0.1
+  zlo: -5.0
+  zhi: 20.0
+
+velocity_distribution:
+  zlo: 40.0
+  zhi: 60.0
+  component: 0
+  bins: 50
+
+carbon_positions:
+  zlo: 5.0
+
+# --- Output ---
+output:
+  base_folder: "results/"
+  prefix: "process_60_0_constA_7.5Ang"
