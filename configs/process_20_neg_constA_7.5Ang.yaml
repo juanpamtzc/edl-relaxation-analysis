@@ -6,7 +6,7 @@ runs:
   - "C"
 
 files:
-  trajectory: "process_0.045Cpsqm_neg_1.0M_KCl_20_constA.lammpstrj"
+  trajectory: "process_0.045Cpsqm_neg_1.0M_KCl_20_constA_.lammpstrj"
   velocity: "process_0.045Cpsqm_neg_1.0M_KCl_20_constA__vel.lammpstrj"
   force: "process_0.045Cpsqm_neg_1.0M_KCl_20_constA__f.lammpstrj"
   stress: "process_0.045Cpsqm_neg_1.0M_KCl_20_constA__stress_therm.lammpstrj"
