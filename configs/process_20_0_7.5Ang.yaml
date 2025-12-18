@@ -79,6 +79,11 @@ plotting_options:
   zz_stress_ylo: -800000
   zz_stress_yhi: 2000000
 
+  temp_xlo: -2.0
+  temp_xhi: 2.0
+  temp_ylo: 240
+  temp_yhi: 400
+
 # --- Output ---
 output:
   base_folder: "results/"
