@@ -56,6 +56,7 @@ global_chloride_density = []
 global_oxygen_xx_stress = []
 global_oxygen_yy_stress = []
 global_oxygen_zz_stress = []
+global_interfacial_temperature = []
 
 # loop over all the runs
 for run in runs:
@@ -138,6 +139,9 @@ for run in runs:
     global_oxygen_yy_stress.append(oxygen_yy_stress)
     global_oxygen_zz_stress.append(oxygen_zz_stress)
 
+    # collect interfacial temperatures for global averaging
+    global_interfacial_temperature.append(thermo_data['c_T1_xy'])
+
 # average densities over all runs
 avg_com_density = np.mean(np.array(global_com_density), axis=0)
 avg_potassium_density = np.mean(np.array(global_potassium_density), axis=0)
@@ -156,6 +160,10 @@ std_oxygen_xx_stress = np.std(np.array(global_oxygen_xx_stress), axis=0)
 std_oxygen_yy_stress = np.std(np.array(global_oxygen_yy_stress), axis=0)
 std_oxygen_zz_stress = np.std(np.array(global_oxygen_zz_stress), axis=0)
 
+# average interfacial temperature over all runs
+avg_interfacial_temperature = np.mean(np.array(global_interfacial_temperature), axis=0)
+std_interfacial_temperature = np.std(np.array(global_interfacial_temperature), axis=0)
+
 # plot averaged densities
 plot_time_series(time, avg_com_density, title="Average COM Density Over Time", xlabel="Time (fs)", ylabel="Density (molecules/Å²)", output_file=output_prefix+"_avg_com_density.png")
 plot_time_series(time, avg_potassium_density, title="Average Potassium Density Over Time", xlabel="Time (fs)", ylabel="Density (ions/Å²)", output_file=output_prefix+"_avg_potassium_density.png")
@@ -163,11 +171,13 @@ plot_time_series(time, avg_chloride_density, title="Average Chloride Density Ove
 plot_time_series(time, avg_oxygen_xx_stress, title="Average Oxygen XX Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_xx_stress.png")
 plot_time_series(time, avg_oxygen_yy_stress, title="Average Oxygen YY Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_yy_stress.png")
 plot_time_series(time, avg_oxygen_zz_stress, title="Average Oxygen ZZ Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_zz_stress.png")
+plot_time_series(time, avg_interfacial_temperature, title="Average Interfacial Temperature Over Time", xlabel="Time (fs)", ylabel="Temperature (K)", output_file=output_prefix+"_avg_interfacial_temperature.png")  
 
 # plot hysteresis loops
 plot_time_series(lower_wall_z_coordinates, avg_com_density, title="Hysteresis Loop: COM Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="COM Density (molecules/Å²)", output_file=output_prefix+"_hysteresis_com_density.png", xlim=(density_plotting_options['water_density_xlo'], density_plotting_options['water_density_xhi']), ylim=(density_plotting_options['water_density_ylo'], density_plotting_options['water_density_yhi']))
-plot_time_series(lower_wall_z_coordinates, avg_potassium_density, title="Hysteresis Loop: Potassium Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Potassium Density (ions/Å²)", output_file=output_prefix+"_hysteresis_potassium_density.png")
-plot_time_series(lower_wall_z_coordinates, avg_chloride_density, title="Hysteresis Loop: Chloride Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Chloride Density (ions/Å²)", output_file=output_prefix+"_hysteresis_chloride_density.png")
-plot_time_series(lower_wall_z_coordinates, avg_oxygen_xx_stress, title="Hysteresis Loop: Oxygen XX Stress vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Oxygen XX Stress", output_file=output_prefix+"_hysteresis_oxygen_xx_stress.png")
-plot_time_series(lower_wall_z_coordinates, avg_oxygen_yy_stress, title="Hysteresis Loop: Oxygen YY Stress vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Oxygen YY Stress", output_file=output_prefix+"_hysteresis_oxygen_yy_stress.png")
-plot_time_series(lower_wall_z_coordinates, avg_oxygen_zz_stress, title="Hysteresis Loop: Oxygen ZZ Stress vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Oxygen ZZ Stress", output_file=output_prefix+"_hysteresis_oxygen_zz_stress.png")
+plot_time_series(lower_wall_z_coordinates, avg_potassium_density, title="Hysteresis Loop: Potassium Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Potassium Density (ions/Å²)", output_file=output_prefix+"_hysteresis_potassium_density.png", xlim=(density_plotting_options['potassium_density_xlo'], density_plotting_options['potassium_density_xhi']), ylim=(density_plotting_options['potassium_density_ylo'], density_plotting_options['potassium_density_yhi']))
+plot_time_series(lower_wall_z_coordinates, avg_chloride_density, title="Hysteresis Loop: Chloride Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Chloride Density (ions/Å²)", output_file=output_prefix+"_hysteresis_chloride_density.png", xlim=(density_plotting_options['chloride_density_xlo'], density_plotting_options['chloride_density_xhi']), ylim=(density_plotting_options['chloride_density_ylo'], density_plotting_options['chloride_density_yhi']))
+plot_time_series(lower_wall_z_coordinates, avg_oxygen_xx_stress, title="Hysteresis Loop: Oxygen XX Stress vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Oxygen XX Stress", output_file=output_prefix+"_hysteresis_oxygen_xx_stress.png", xlim=(density_plotting_options['xx_stress_xlo'], density_plotting_options['xx_stress_xhi']), ylim=(density_plotting_options['xx_stress_ylo'], density_plotting_options['xx_stress_yhi']))
+plot_time_series(lower_wall_z_coordinates, avg_oxygen_yy_stress, title="Hysteresis Loop: Oxygen YY Stress vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Oxygen YY Stress", output_file=output_prefix+"_hysteresis_oxygen_yy_stress.png", xlim=(density_plotting_options['yy_stress_xlo'], density_plotting_options['yy_stress_xhi']), ylim=(density_plotting_options['yy_stress_ylo'], density_plotting_options['yy_stress_yhi']))
+plot_time_series(lower_wall_z_coordinates, avg_oxygen_zz_stress, title="Hysteresis Loop: Oxygen ZZ Stress vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Oxygen ZZ Stress", output_file=output_prefix+"_hysteresis_oxygen_zz_stress.png", xlim=(density_plotting_options['zz_stress_xlo'], density_plotting_options['zz_stress_xhi']), ylim=(density_plotting_options['zz_stress_ylo'], density_plotting_options['zz_stress_yhi']))
+plot_time_series(lower_wall_z_coordinates, avg_interfacial_temperature, title="Hysteresis Loop: Interfacial Temperature vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Interfacial Temperature (K)", output_file=output_prefix+"_hysteresis_interfacial_temperature.png")
