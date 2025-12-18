@@ -56,28 +56,28 @@ plotting_options:
 
   potassium_density_xlo: -2.0
   potassium_density_xhi: 2.0
-  potassium_density_ylo: 5E-5
-  potassium_density_yhi: 4E-4
+  potassium_density_ylo: 0.00005
+  potassium_density_yhi: 0.0004
 
   chloride_density_xlo: -2.0
   chloride_density_xhi: 2.0
-  chloride_density_ylo: 5E-5
-  chloride_density_yhi: 4E-4
+  chloride_density_ylo: 0.00005
+  chloride_density_yhi: 0.0004
 
   xx_stress_xlo: -2.0
   xx_stress_xhi: 2.0
-  xx_stress_ylo: -1.4E6
-  xx_stress_yhi: -0.5E6
+  xx_stress_ylo: -1400000
+  xx_stress_yhi: -500000
 
   yy_stress_xlo: -2.0
   yy_stress_xhi: 2.0
-  yy_stress_ylo: -1.4E6
-  yy_stress_yhi: -0.5E6
+  yy_stress_ylo: -1400000
+  yy_stress_yhi: -500000
 
   zz_stress_xlo: -2.0
   zz_stress_xhi: 2.0
-  zz_stress_ylo: -0.8E6
-  zz_stress_yhi: 2E6
+  zz_stress_ylo: -800000
+  zz_stress_yhi: 2000000
 
 # --- Output ---
 output:
