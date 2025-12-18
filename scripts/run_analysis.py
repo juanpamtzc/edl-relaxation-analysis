@@ -43,6 +43,8 @@ velocity_distribution_config = config['velocity_distribution']
 
 output_config = config['output']
 
+density_plotting_options = config['plotting_options']
+
 # create output base directory if it doesn't exist
 out_folder = os.path.join(project_root, output_config['base_folder'])
 os.makedirs(out_folder, exist_ok=True)
@@ -163,7 +165,7 @@ plot_time_series(time, avg_oxygen_yy_stress, title="Average Oxygen YY Stress Ove
 plot_time_series(time, avg_oxygen_zz_stress, title="Average Oxygen ZZ Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_zz_stress.png")
 
 # plot hysteresis loops
-plot_time_series(lower_wall_z_coordinates, avg_com_density, title="Hysteresis Loop: COM Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="COM Density (molecules/Å²)", output_file=output_prefix+"_hysteresis_com_density.png")
+plot_time_series(lower_wall_z_coordinates, avg_com_density, title="Hysteresis Loop: COM Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="COM Density (molecules/Å²)", output_file=output_prefix+"_hysteresis_com_density.png", xlim=(density_plotting_options['water_density_xlo'], density_plotting_options['water_density_xhi']), ylim=(density_plotting_options['water_density_ylo'], density_plotting_options['water_density_yhi']))
 plot_time_series(lower_wall_z_coordinates, avg_potassium_density, title="Hysteresis Loop: Potassium Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Potassium Density (ions/Å²)", output_file=output_prefix+"_hysteresis_potassium_density.png")
 plot_time_series(lower_wall_z_coordinates, avg_chloride_density, title="Hysteresis Loop: Chloride Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Chloride Density (ions/Å²)", output_file=output_prefix+"_hysteresis_chloride_density.png")
 plot_time_series(lower_wall_z_coordinates, avg_oxygen_xx_stress, title="Hysteresis Loop: Oxygen XX Stress vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="Oxygen XX Stress", output_file=output_prefix+"_hysteresis_oxygen_xx_stress.png")

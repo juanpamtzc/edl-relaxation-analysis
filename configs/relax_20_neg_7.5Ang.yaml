@@ -41,6 +41,12 @@ velocity_distribution:
   component: 0
   bins: 50
 
+plotting_options:
+  water_density_xlo: -2.0
+  water_density_xhi: 2.0
+  water_density_ylo: 0.016
+  water_density_yhi: 0.026
+
 # --- Output ---
 output:
   base_folder: "results/"
