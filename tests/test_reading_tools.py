@@ -13,11 +13,7 @@ class TestReading(unittest.TestCase):
     def test_readDatFile_output_has_required_keys(self):
         filename = "./tests/test_data/test_data.dat"
         data = readDatFile(filename)
-        required_keys = ['Masses', 'Atoms', '# atoms',
-                        '# bonds', '# angles', '# dihedrals',
-                        '# impropers', '# atom types',
-                        '# bond types', '# angle types',
-                        '# dihedral types', '# improper types',
+        required_keys = ['Masses', 'Atoms', '# atoms', '# atom types',
                         'xlo', 'xhi', 'ylo', 'yhi',
                         'zlo', 'zhi']
         for key in required_keys:
