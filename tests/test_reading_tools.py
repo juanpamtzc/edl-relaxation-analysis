@@ -5,13 +5,13 @@ import numpy as np
 class TestReading(unittest.TestCase):
 
     def test_readDatFile_returns_correct_data(self):
-        filename = "./data/test_data.dat"
+        filename = "./test_data/test_data.dat"
         data = readDatFile(filename)
         self.assertIsInstance(data, dict)
 
 
     def test_readDatFile_output_has_required_keys(self):
-        filename = "./data/test_data.dat"
+        filename = "./test_data/test_data.dat"
         data = readDatFile(filename)
         required_keys = ['Masses', 'Atoms', '# atoms',
                         '# bonds', '# angles', '# dihedrals',
