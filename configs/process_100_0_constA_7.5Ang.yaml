@@ -82,7 +82,7 @@ plotting_options:
   temp_xlo: -2.0
   temp_xhi: 2.0
   temp_ylo: 240
-  temp_yhi: 400
+  temp_yhi: 600
 
 # --- Output ---
 output:
