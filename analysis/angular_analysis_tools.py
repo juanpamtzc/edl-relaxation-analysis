@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import Optional
+from typing import Optional, List
 
 # Left to improve: 
 # - add error handling
@@ -155,7 +155,32 @@ def COM_trj(positions_oxygens: np.array, positions_h1s: np.array, positions_h2s:
 
     return positions_COM, velocities_COM
 
-def compute_local_basis_unit_vectors(data, trj, oxygen_type, hydrogen_type, box_size, global2local=None, mode="debug"):
+# Left to improve:
+# - add error handling
+# - add unit tests
+def compute_local_basis_unit_vectors(data: dict, trj: np.array, oxygen_type: int, hydrogen_type: int, box_size: List[float], global2local:Optional[dict] = None, mode:Optional[str] = "debug") -> tuple:
+    """
+    Computes the local basis unit vectors of each water molecule at each instant in time.
+
+    Args:
+        data:               dictionary with the information from the data file from the corresponding simulation as given by readDatFile in reading_tools.py.
+        trj:                numpy array with shape (M,N,4) where M is the number of timeframes, N is the number of atoms, and the last dimension corresponds to (atom type, x, y, z), 
+                            where atom type is an integer.
+        oxygen_type:        integer corresponding to the atom type of the oxygen atoms in the water molecules.
+        hydrogen_type:      integer corresponding to the atom type of the hydrogen atoms in the water molecules.
+        box_size:           list or array with 3 elements corresponding to the box size in x, y, z directions.
+        global2local:       (optional) dictionary mapping global atom indices to local atom indices in the trajectory data. If provided, only water molecules with all atoms present 
+                            in the trajectory will be included. This allows for handling trajectory data that may not include all atoms from the original data file.
+        mode:               (optional) string indicating whether to print debug information. If "debug", prints debug information. Default is "debug".
+
+    Returns:
+        a:                  numpy array with shape (M, N_water_molecules, 3) with the local basis unit vector a of each water molecule at each timeframe.
+        b:                  numpy array with shape (M, N_water_molecules, 3) with the local basis unit vector b of each water molecule at each timeframe.
+        c:                  numpy array with shape (M, N_water_molecules, 3) with the local basis unit vector c of each water molecule at each timeframe.
+        oxygens:            numpy array with shape (M, N_water_molecules, 3) with the positions of the oxygen atoms of each water molecule.
+        h1s:                numpy array with shape (M, N_water_molecules, 3) with the positions of one of the hydrogen atoms of each water molecule.
+        h2s:                numpy array with shape (M, N_water_molecules, 3) with the positions of the other hydrogen atom of each water molecule.
+    """
 
     # use arrange_trj_data_by_molecules to get the positions of the oxygens and hydrogens
     # refer to the documentation and comments of that function (it's in this same script) for more details
@@ -208,9 +233,24 @@ def compute_local_basis_unit_vectors(data, trj, oxygen_type, hydrogen_type, box_
 
     return a, b, c, oxygens, h1s, h2s
 
-# This function computes the time derivative of the local basis vectors a, b, c
-# It uses the central difference method by default, but can also use forward or backward difference methods
-def compute_de_dt(a,b,c,dt,style="central difference"):
+# Left to improve:
+# - add error handling
+# - add unit tests
+def compute_de_dt(a: np.array,b: np.array,c: np.array, dt: int, style: Optional[str] = "central difference") -> tuple:
+    """
+    Computes the time derivative of the local basis vectors a, b, c using finite difference methods.
+
+    Args:
+        a, b, c:            numpy arrays with shape (M, N, 3) representing the local basis vectors of each water molecule at each timeframe.
+        dt:                 time step between frames.
+        style:              (optional) string indicating the finite difference method to use. Options are "central difference" (default), "forward difference", and "backward difference".
+    
+    Returns:
+        da_dt:              numpy array with shape (M', N, 3) representing the time derivatives of the local basis vectors, where M' depends on the chosen finite difference method.
+        db_dt:              numpy array with shape (M', N, 3) representing the time derivatives of the local basis vectors, where M' depends on the chosen finite difference method.
+        dc_dt:              numpy array with shape (M', N, 3) representing the time derivatives of the local basis vectors, where M' depends on the chosen finite difference method.
+    """
+
     M=a.shape[0]
     da_dt=np.zeros(a.shape)
     db_dt=np.zeros(b.shape)
@@ -229,8 +269,27 @@ def compute_de_dt(a,b,c,dt,style="central difference"):
         dc_dt[1:M-1,:,:]=(c[2:,:,:]-c[:M-2,:,:])/(2*dt)
     return da_dt, db_dt, dc_dt
 
-# This function computes the angular velocity of the molecule based on the time derivative of the local basis vectors
-def compute_angular_velocity_from_basis_vectors(a,b,c,da_dt,db_dt,dc_dt,style="central difference"):
+# Left to improve:
+# - add error handling
+# - add unit tests
+def compute_angular_velocity_from_basis_vectors(a: np.array, b: np.array, c: np.array, da_dt: np.array, db_dt: np.array, dc_dt: np.array, style: Optional[str] = "central difference") -> np.array:
+    """
+    Computes the angular velocity of the molecule based on the time derivative of the local basis vectors.
+
+
+    Args:
+        a:                  numpy array with shape (M, N, 3) representing the local basis vector a over time and molecules.
+        b:                  numpy array with shape (M, N, 3) representing the local basis vector b over time and molecules.
+        c:                  numpy array with shape (M, N, 3) representing the local basis vector c over time and molecules.
+        da_dt:              numpy array with shape (M, N, 3) representing the time derivative of a.
+        db_dt:              numpy array with shape (M, N, 3) representing the time derivative of b.
+        dc_dt:              numpy array with shape (M, N, 3) representing the time derivative of c.
+        style:              (optional) string indicating the finite difference method used. Options are "central difference" (default), "forward difference", and "backward difference".
+
+    Returns:
+        angular_velocities: numpy array with shape (M', N, 3) representing the angular velocities, where M' depends on the chosen finite difference method.
+    """
+    
     M=a.shape[0]
     angular_velocities=np.zeros(a.shape)
     angular_velocities[:,:,0]=np.sum(db_dt*c,axis=2)
@@ -244,8 +303,22 @@ def compute_angular_velocity_from_basis_vectors(a,b,c,da_dt,db_dt,dc_dt,style="c
         angular_velocities=angular_velocities[1:M-1,:,:]
     return angular_velocities
 
-# This function transforms the angular velocities from the local frame (a,b,c) to the lab frame (x,y,z)
-def transform_angular_velocities_to_lab_frame(angular_velocities, a, b, c, style="central difference"):
+# Left to improve:
+# - add error handling
+# - add unit tests
+def transform_angular_velocities_to_lab_frame(angular_velocities: np.array, a: np.array, b: np.array, c: np.array, style: Optional[str] = "central difference") -> np.array:
+    """
+    Transforms the angular velocities from the local frame to the lab frame.
+
+    Args:
+        angular_velocities: numpy array with shape (M,N,3) representing the angular velocities.
+        a, b, c:            numpy arrays with shape (M,N,3) representing the local basis vectors.
+        style:              (optional) string indicating the finite difference method used. Options are "central
+
+    Returns:
+        angular_velocities_global: numpy array with shape (M',N,3) representing the angular velocities in the lab frame, where M' depends on the chosen finite difference method.
+    """
+    
     # Build rotation matrices R to go from local (a,b,c) to lab (x,y,z)
     R = np.stack([a, b, c], axis=-1)  # shape (T, N, 3, 3)
 
@@ -260,20 +333,21 @@ def transform_angular_velocities_to_lab_frame(angular_velocities, a, b, c, style
     angular_velocities_global = np.einsum('...ij,...j->...i', R, angular_velocities)
     return angular_velocities_global
 
-# This function computes the time- and space-averaged angular distribution between local basis vectors a, b, c and the global z-axis
-def compute_angle_distribution_with_z(a, b, c, nbins=180, output_file=None, plot=False):
+# Left to improve:
+# - add error handling
+# - add unit tests
+def compute_angle_distribution_with_z(a: np.array, b: np.array, c: np.array, nbins: Optional[int] = 180, output_file: Optional[str] = None, plot: Optional[bool] = False) -> tuple:
     """
-    Compute the time- and space-averaged angular distribution between local basis vectors
-    a, b, c and the global z-axis. Optionally save and/or plot the result.
+    Computes the time- and space-averaged angular distribution between local basis vectors a, b, c and the global z-axis. Optionally save and/or plot the result.
 
     Parameters:
-    - a, b, c: Arrays of shape (T, N, 3), basis vectors over time and molecules
-    - nbins: Number of bins for histogram (default: 180 for 1-degree resolution)
-    - output_file: Path to save the output .txt file (optional)
-    - plot: If True, display a plot of the distributions
+    - a, b, c:              Arrays of shape (T, N, 3), basis vectors over time and molecules
+    - nbins:                Number of bins for histogram (default: 180 for 1-degree resolution)
+    - output_file:          Path to save the output .txt file (optional)
+    - plot:                 If True, display a plot of the distributions
 
     Returns:
-    - bin_centers: Midpoints of angle bins (in degrees)
+    - bin_centers:          Midpoints of angle bins (in degrees)
     - hist_a, hist_b, hist_c: Normalized histograms for vectors a, b, and c
     """
 
