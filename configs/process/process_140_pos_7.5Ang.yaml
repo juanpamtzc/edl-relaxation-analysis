@@ -1,0 +1,92 @@
+# --- Input files ---
+base_path: "data/0.045Cpsqm_pos/140_"
+runs:
+  - "A"
+  - "B"
+  - "C"
+
+files:
+  trajectory: "process_0.045Cpsqm_pos_1.0M_KCl_140.lammpstrj"
+  velocity: "process_0.045Cpsqm_pos_1.0M_KCl_140_vel.lammpstrj"
+  force: "process_0.045Cpsqm_pos_1.0M_KCl_140_f.lammpstrj"
+  stress: "process_0.045Cpsqm_pos_1.0M_KCl_140_stress_therm.lammpstrj"
+  data: "data/data_files/0.045Cpsqm_pos_1.0M_KCl.dat"
+  thermo_directory: "data/"
+  thermo: "140_pos.txt"
+
+trajectory_type: "process"
+
+# --- thermodynamic output reading parameters ---
+thermo_process_ID: 2
+
+# --- Atom types ---
+atom_types:
+  carbon: 1
+  oxygen: 2
+  hydrogen: 3
+  potassium: 4
+  chloride: 5
+
+# --- Timestep size and FD scheme ---
+dt: 1.0
+finite_difference_scheme: "central difference"
+
+# --- Analysis parameters ---
+region:
+  zlo: 0.0
+  zhi: 7.5
+
+density:
+  bin_size: 0.1
+  zlo: -5.0
+  zhi: 20.0
+
+velocity_distribution:
+  zlo: 40.0
+  zhi: 60.0
+  component: 0
+  bins: 50
+
+carbon_positions:
+  zlo: 5.0
+
+plotting_options:
+  water_density_xlo: -2.0
+  water_density_xhi: 2.0
+  water_density_ylo: 0.016
+  water_density_yhi: 0.026
+
+  potassium_density_xlo: -2.0
+  potassium_density_xhi: 2.0
+  potassium_density_ylo: 0.00005
+  potassium_density_yhi: 0.0004
+
+  chloride_density_xlo: -2.0
+  chloride_density_xhi: 2.0
+  chloride_density_ylo: 0.00005
+  chloride_density_yhi: 0.0004
+
+  xx_stress_xlo: -2.0
+  xx_stress_xhi: 2.0
+  xx_stress_ylo: -1400000
+  xx_stress_yhi: -500000
+
+  yy_stress_xlo: -2.0
+  yy_stress_xhi: 2.0
+  yy_stress_ylo: -1400000
+  yy_stress_yhi: -500000
+
+  zz_stress_xlo: -2.0
+  zz_stress_xhi: 2.0
+  zz_stress_ylo: -800000
+  zz_stress_yhi: 2000000
+
+  temp_xlo: -2.0
+  temp_xhi: 2.0
+  temp_ylo: 240
+  temp_yhi: 400
+
+# --- Output ---
+output:
+  base_folder: "results/"
+  prefix: "process_140_pos_7.5Ang"
