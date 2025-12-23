@@ -123,9 +123,30 @@ def arrange_trj_data_by_molecules(data: dict, trj: np.array, oxygen_type: int, h
         
     return oxygens, h1s, h2s
 
-# This function calculates the center of mass (COM) positions and velocities for water molecules
-# WARNING: this assumes that there is a function that decomposes the entire trajectory data into just the data of the oxygens and the hydrogens of water.
-def COM_trj(positions_oxygens,positions_h1s,positions_h2s,velocities_oxygens,velocities_h1s,velocities_h2s,data,hydrogen_type,oxygen_type):
+# Left to improve:
+# - add error handling
+# - add unit tests
+def COM_trj(positions_oxygens: np.array, positions_h1s: np.array, positions_h2s: np.array, velocities_oxygens: np.array, velocities_h1s: np.array, velocities_h2s: np.array, data: dict, hydrogen_type: int, oxygen_type: int) -> tuple:
+    """
+    Calculates the center of mass (COM) positions and velocities for water molecules based on the positions and velocities of their constituent atoms (oxygens and hydrogens).
+
+    Args:
+        positions_oxygens:  numpy array with shape (M, N, 3) containing the positions of oxygen atoms, where M is the number of timeframes, N is the number of water molecules, 
+                            and 3 corresponds to x, y, z coordinates.
+        positions_h1s:      numpy array with shape (M, N, 3) containing the positions of one hydrogen atom of each water molecule.
+        positions_h2s:      numpy array with shape (M, N, 3) containing the positions of the other hydrogen atom of each water molecule.
+        velocities_oxygens: numpy array with shape (M, N, 3) containing the velocities of oxygen atoms.
+        velocities_h1s:     numpy array with shape (M, N, 3) containing the velocities of one hydrogen atom of each water molecule.
+        velocities_h2s:     numpy array with shape (M, N, 3) containing the velocities of the other hydrogen atom of each water molecule.
+        data:               dictionary with the information from the data file from the corresponding simulation as given by readDatFile in reading_tools.py.
+        hydrogen_type:      integer corresponding to the atom type of the hydrogen atoms in the water molecules.
+        oxygen_type:        integer corresponding to the atom type of the oxygen atoms in the water molecules.
+    
+    Returns:
+        positions_COM:      numpy array with shape (M, N, 3) containing the center of mass positions of each water molecule.
+        velocities_COM:     numpy array with shape (M, N, 3) containing the center of mass velocities of each water molecule.
+    """
+
     hydrogen_mass=data["Masses"][hydrogen_type]
     oxygen_mass=data["Masses"][oxygen_type]
 
