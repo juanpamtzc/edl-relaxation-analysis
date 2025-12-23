@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from pyparsing import Optional
+from typing import Optional
 
 # Left to improve: 
 # - add error handling
