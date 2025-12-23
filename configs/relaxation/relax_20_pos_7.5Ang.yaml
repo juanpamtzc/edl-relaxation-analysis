@@ -14,6 +14,8 @@ files:
   thermo_directory: "data/"
   thermo: "20_pos.txt"
 
+trajectory_type: "relaxation"
+
 # --- thermodynamic output reading parameters ---
 thermo_process_ID: 2
 
