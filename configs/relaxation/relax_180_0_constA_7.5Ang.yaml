@@ -66,6 +66,11 @@ plotting_options:
   chloride_density_ylo: 0.00005
   chloride_density_yhi: 0.0004
 
+  ionic_charge_density_xlo: -2.0
+  ionic_charge_density_xhi: 2.0
+  ionic_charge_density_ylo: -0.0004
+  ionic_charge_density_yhi: 0.0004
+
   xx_stress_xlo: -2.0
   xx_stress_xhi: 2.0
   xx_stress_ylo: -1400000
