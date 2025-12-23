@@ -17,7 +17,7 @@ files:
 trajectory_type: "relaxation"
 
 # --- thermodynamic output reading parameters ---
-thermo_process_ID: 2
+thermo_process_ID: 3
 
 # --- Atom types ---
 atom_types:
@@ -51,6 +51,8 @@ carbon_positions:
   zlo: 5.0
 
 plotting_options:
+  time_series_max_limit: 50000
+
   water_density_xlo: -2.0
   water_density_xhi: 2.0
   water_density_ylo: 0.016
