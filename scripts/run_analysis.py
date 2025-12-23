@@ -144,6 +144,7 @@ for run in runs:
 
     # collect interfacial temperatures for global averaging
     global_interfacial_temperature.append(thermo_data['c_T1_xy'])
+    thermo_time = thermo_data['Step']
 
 # average densities over all runs
 avg_com_density = np.mean(np.array(global_com_density), axis=0)
@@ -177,7 +178,7 @@ plot_time_series(time, avg_ionic_charge_density, title="Average Ionic Charge Den
 plot_time_series(time, avg_oxygen_xx_stress, title="Average Oxygen XX Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_xx_stress.png")
 plot_time_series(time, avg_oxygen_yy_stress, title="Average Oxygen YY Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_yy_stress.png")
 plot_time_series(time, avg_oxygen_zz_stress, title="Average Oxygen ZZ Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_zz_stress.png")
-plot_time_series(time, avg_interfacial_temperature[:-1], title="Average Interfacial Temperature Over Time", xlabel="Time (fs)", ylabel="Temperature (K)", output_file=output_prefix+"_avg_interfacial_temperature.png")  
+plot_time_series(thermo_time, avg_interfacial_temperature, title="Average Interfacial Temperature Over Time", xlabel="Time (fs)", ylabel="Temperature (K)", output_file=output_prefix+"_avg_interfacial_temperature.png")  
 
 # plot hysteresis loops
 plot_time_series(lower_wall_z_coordinates, avg_com_density, title="Hysteresis Loop: COM Density vs Lower Wall Z", xlabel="Lower Wall Z (Å)", ylabel="COM Density (molecules/Å^3)", output_file=output_prefix+"_hysteresis_com_density.png", xlim=(density_plotting_options['water_density_xlo'], density_plotting_options['water_density_xhi']), ylim=(density_plotting_options['water_density_ylo'], density_plotting_options['water_density_yhi']))
