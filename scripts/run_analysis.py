@@ -172,8 +172,10 @@ avg_interfacial_temperature = np.mean(np.array(global_interfacial_temperature), 
 std_interfacial_temperature = np.std(np.array(global_interfacial_temperature), axis=0)
 
 # set timeseries xlim
-if "time_series_max_limit" not in density_plotting_options:
+if "time_series_max_limit" in density_plotting_options:
     xlim_timeseries = (0, density_plotting_options["time_series_max_limit"])
+else:
+    xlim_timeseries = (None, None)
 
 # plot averaged densities
 plot_time_series(time, avg_com_density, title="Average COM Density Over Time", xlabel="Time (fs)", ylabel="Density (molecules/Å^3)", output_file=output_prefix+"_avg_com_density.png", xlim=xlim_timeseries)
