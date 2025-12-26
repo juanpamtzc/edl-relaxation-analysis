@@ -13,7 +13,7 @@ project_root = os.path.join(script_dir, '..')
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from analysis.data_processing_tools import process_filename
+from analysis.data_processing_tools import process_filename, save_timeseries_as_txt, read_timeseries_from_txt
 from analysis.angular_analysis_tools import COM_trj, compute_local_basis_unit_vectors, arrange_trj_data_by_molecules, unwrap_trj
 from analysis.transient_analysis_tools import compute_region_density_over_time, compute_velocity_distribution_in_region, find_lower_wall_z_coordinates, compute_average_property_over_time
 from analysis.plotting_tools import plot_time_series, plot_distribution_function, plot_2d_heatmap
@@ -177,7 +177,7 @@ if "time_series_max_limit" in density_plotting_options:
 else:
     xlim_timeseries = (None, None)
 
-# plot averaged densities
+# plot and save averaged densities
 plot_time_series(time, avg_com_density, title="Average COM Density Over Time", xlabel="Time (fs)", ylabel="Density (molecules/Å^3)", output_file=output_prefix+"_avg_com_density.png", xlim=xlim_timeseries)
 plot_time_series(time, avg_potassium_density, title="Average Potassium Density Over Time", xlabel="Time (fs)", ylabel="Density (ions/Å^3)", output_file=output_prefix+"_avg_potassium_density.png", xlim=xlim_timeseries)
 plot_time_series(time, avg_chloride_density, title="Average Chloride Density Over Time", xlabel="Time (fs)", ylabel="Density (ions/Å^3)", output_file=output_prefix+"_avg_chloride_density.png", xlim=xlim_timeseries)
@@ -186,6 +186,14 @@ plot_time_series(time, avg_oxygen_xx_stress, title="Average Oxygen XX Stress Ove
 plot_time_series(time, avg_oxygen_yy_stress, title="Average Oxygen YY Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_yy_stress.png", xlim=xlim_timeseries)
 plot_time_series(time, avg_oxygen_zz_stress, title="Average Oxygen ZZ Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_zz_stress.png", xlim=xlim_timeseries)
 plot_time_series(thermo_time, avg_interfacial_temperature, title="Average Interfacial Temperature Over Time", xlabel="Time (fs)", ylabel="Temperature (K)", output_file=output_prefix+"_avg_interfacial_temperature.png", xlim=xlim_timeseries)  
+save_timeseries_as_txt(time, avg_com_density, output_filename=output_prefix+"_avg_com_density.txt")
+save_timeseries_as_txt(time, avg_potassium_density, output_filename=output_prefix+"_avg_potassium_density.txt")
+save_timeseries_as_txt(time, avg_chloride_density, output_filename=output_prefix+"_avg_chloride_density.txt")
+save_timeseries_as_txt(time, avg_ionic_charge_density, output_filename=output_prefix+"_avg_ionic_charge_density.txt")
+save_timeseries_as_txt(time, avg_oxygen_xx_stress, output_filename=output_prefix+"_avg_oxygen_xx_stress.txt")
+save_timeseries_as_txt(time, avg_oxygen_yy_stress, output_filename=output_prefix+"_avg_oxygen_yy_stress.txt")
+save_timeseries_as_txt(time, avg_oxygen_zz_stress, output_filename=output_prefix+"_avg_oxygen_zz_stress.txt")
+save_timeseries_as_txt(thermo_time, avg_interfacial_temperature, output_filename=output_prefix+"_avg_interfacial_temperature.txt")
 
 # plot hysteresis loops
 if trajectory_type=="process":
