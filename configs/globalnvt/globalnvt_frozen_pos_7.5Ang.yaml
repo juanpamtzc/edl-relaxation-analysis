@@ -10,7 +10,7 @@ files:
   stress: "equil_globalnvt_frozen_0.045Cpsqm_pos_1.0M_KCl__stress_therm.lammpstrj"
   data: "data/data_files/0.045Cpsqm_pos_1.0M_KCl.dat"
   thermo_directory: "data/"
-  thermo: "equil_globalnvt_frozen.txt"
+  thermo: "globalnvt_frozen.txt"
 
 trajectory_type: "equilibrium"
 
