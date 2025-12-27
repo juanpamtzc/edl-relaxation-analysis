@@ -91,6 +91,8 @@ plotting_options:
   temp_ylo: 240
   temp_yhi: 400
 
+equilibrium_benchmark_prefix: "equil_globalnvt_neg_7.5Ang"
+
 # --- Output ---
 output:
   base_folder: "results/"
