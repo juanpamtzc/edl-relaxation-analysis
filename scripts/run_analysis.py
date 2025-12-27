@@ -186,12 +186,16 @@ equil_oxygen_zz_stress = None
 equil_interfacial_temperature = None
 
 if 'equilibrium_benchmark_prefix' in config:
+    print("Equilibrium benchmark prefix found in configuration. Loading benchmark data...")
     equilibrium_prefix = os.path.join(out_folder, config['equilibrium_benchmark_prefix'])
     if Path(equilibrium_prefix+"_avg_com_density.txt").is_file():
+        print("Equilibrium COM density benchmark found. Loading equilibrium COM density benchmark data...")
         _, equil_com_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_com_density.txt")
     if Path(equilibrium_prefix+"_avg_potassium_density.txt").is_file():
+        print("Equilibrium potassium density benchmark found. Loading equilibrium potassium density benchmark data...")
         _, equil_potassium_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_potassium_density.txt")
     if Path(equilibrium_prefix+"_avg_chloride_density.txt").is_file():
+        print("Equilibrium chloride density benchmark found. Loading equilibrium chloride density benchmark data...")
         _, equil_chloride_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_chloride_density.txt")
     if Path(equilibrium_prefix+"_avg_ionic_charge_density.txt").is_file():
         _, equil_ionic_charge_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_ionic_charge_density.txt")
