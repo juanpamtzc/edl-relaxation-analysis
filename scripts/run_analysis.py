@@ -185,24 +185,24 @@ equil_oxygen_yy_stress = None
 equil_oxygen_zz_stress = None
 equil_interfacial_temperature = None
 
-
-equilibrium_prefix = os.path.join(out_folder, config['equilibrium_benchmark_prefix'])
-if Path(equilibrium_prefix+"_avg_com_density.txt").is_file():
-    _, equil_com_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_com_density.txt")
-if Path(equilibrium_prefix+"_avg_potassium_density.txt").is_file():
-    _, equil_potassium_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_potassium_density.txt")
-if Path(equilibrium_prefix+"_avg_chloride_density.txt").is_file():
-    _, equil_chloride_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_chloride_density.txt")
-if Path(equilibrium_prefix+"_avg_ionic_charge_density.txt").is_file():
-    _, equil_ionic_charge_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_ionic_charge_density.txt")
-if Path(equilibrium_prefix+"_avg_oxygen_xx_stress.txt").is_file():
-    _, equil_oxygen_xx_stress = read_timeseries_from_txt(equilibrium_prefix+"_avg_oxygen_xx_stress.txt")
-if Path(equilibrium_prefix+"_avg_oxygen_yy_stress.txt").is_file():
-    _, equil_oxygen_yy_stress = read_timeseries_from_txt(equilibrium_prefix+"_avg_oxygen_yy_stress.txt")
-if Path(equilibrium_prefix+"_avg_oxygen_zz_stress.txt").is_file():
-    _, equil_oxygen_zz_stress = read_timeseries_from_txt(equilibrium_prefix+"_avg_oxygen_zz_stress.txt")
-if Path(equilibrium_prefix+"_avg_interfacial_temperature.txt").is_file():
-    _, equil_interfacial_temperature = read_timeseries_from_txt(equilibrium_prefix+"_avg_interfacial_temperature.txt")
+if 'equilibrium_benchmark_prefix' in config:
+    equilibrium_prefix = os.path.join(out_folder, config['equilibrium_benchmark_prefix'])
+    if Path(equilibrium_prefix+"_avg_com_density.txt").is_file():
+        _, equil_com_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_com_density.txt")
+    if Path(equilibrium_prefix+"_avg_potassium_density.txt").is_file():
+        _, equil_potassium_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_potassium_density.txt")
+    if Path(equilibrium_prefix+"_avg_chloride_density.txt").is_file():
+        _, equil_chloride_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_chloride_density.txt")
+    if Path(equilibrium_prefix+"_avg_ionic_charge_density.txt").is_file():
+        _, equil_ionic_charge_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_ionic_charge_density.txt")
+    if Path(equilibrium_prefix+"_avg_oxygen_xx_stress.txt").is_file():
+        _, equil_oxygen_xx_stress = read_timeseries_from_txt(equilibrium_prefix+"_avg_oxygen_xx_stress.txt")
+    if Path(equilibrium_prefix+"_avg_oxygen_yy_stress.txt").is_file():
+        _, equil_oxygen_yy_stress = read_timeseries_from_txt(equilibrium_prefix+"_avg_oxygen_yy_stress.txt")
+    if Path(equilibrium_prefix+"_avg_oxygen_zz_stress.txt").is_file():
+        _, equil_oxygen_zz_stress = read_timeseries_from_txt(equilibrium_prefix+"_avg_oxygen_zz_stress.txt")
+    if Path(equilibrium_prefix+"_avg_interfacial_temperature.txt").is_file():
+        _, equil_interfacial_temperature = read_timeseries_from_txt(equilibrium_prefix+"_avg_interfacial_temperature.txt")
 
 # plot and save averaged densities
 plot_time_series(time, avg_com_density, title="Average COM Density Over Time", xlabel="Time (fs)", ylabel="Density (molecules/Å^3)", output_file=output_prefix+"_avg_com_density.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_com_density) if equil_com_density is not None else None, benchmark_std=np.std(equil_com_density) if equil_com_density is not None else None)
