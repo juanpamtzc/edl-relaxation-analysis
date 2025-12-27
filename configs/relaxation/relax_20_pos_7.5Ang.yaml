@@ -93,7 +93,7 @@ plotting_options:
   temp_ylo: 240
   temp_yhi: 400
 
-equilibrium_benchmark_prefix: "equil_globalnvt_pos_7.5Ang"
+equilibrium_benchmark_prefix: "equil_globalnvt_frozen_pos_7.5Ang"
 
 # --- Output ---
 output:
