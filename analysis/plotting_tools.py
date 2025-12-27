@@ -3,7 +3,7 @@ import numpy as np
 from typing import Optional
 
 # FUTURE WORK: add support for multiple series on the same plot
-def plot_time_series(time: np.array, data: np.array, title: str, xlabel: str, ylabel: str, output_file: str, xlim: Optional[tuple] = None, ylim: Optional[tuple] = None):
+def plot_time_series(time: np.array, data: np.array, title: str, xlabel: str, ylabel: str, output_file: str, xlim: Optional[tuple] = None, ylim: Optional[tuple] = None, benchmark_mean: Optional[np.double] = None, benchmark_std: Optional[np.double] = None):
     """
     Plots a time series data.
 
@@ -16,6 +16,8 @@ def plot_time_series(time: np.array, data: np.array, title: str, xlabel: str, yl
         output_file:            The filename where the plot will be saved.
         xlim (Optional[tuple]): The limits for the x-axis (min, max). Default is None.
         ylim (Optional[tuple]): The limits for the y-axis (min, max). Default is None.
+        benchmark_mean (Optional[np.double]): A benchmark mean value to plot as a horizontal line. Default is None.
+        benchmark_std (Optional[np.double]): A benchmark standard deviation to plot as dashed lines above and below the mean. Default is None.
     """
 
     plt.figure(figsize=(10, 6))
@@ -28,6 +30,11 @@ def plot_time_series(time: np.array, data: np.array, title: str, xlabel: str, yl
         plt.xlim(xlim)
     if ylim:
         plt.ylim(ylim)
+
+    if benchmark_mean is not None:
+        plt.plot(time, np.full_like(time, benchmark_mean), linestyle="--", linewidth=1.5, color="black", label="Benchmark Mean", zorder=2)
+        if benchmark_std is not None:
+            plt.fill_between(time, benchmark_mean - benchmark_std, benchmark_mean + benchmark_std, color="gray", alpha=0.2, label="Benchmark ±1σ", zorder=1)
 
     plt.grid(True)
     plt.savefig(output_file)
