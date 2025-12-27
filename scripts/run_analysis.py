@@ -4,6 +4,7 @@ import yaml
 import numpy as np
 import pandas as pd
 import argparse
+from pathlib import Path
 
 # Get the absolute path of the directory containing the script (scripts/)
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -26,9 +27,6 @@ config_path = os.path.normpath(os.path.join(project_root, args.config))
 with open(config_path) as f:
     config = yaml.safe_load(f)
 
-#config_path = os.path.normpath(os.path.join(project_root, "configs", "20_example.yaml"))
-#with open(config_path) as f:
-#    config = yaml.safe_load(f)
 
 base_path = config['base_path']
 runs = config['runs']
@@ -76,7 +74,7 @@ for run in runs:
     thermo_file = os.path.join(project_root, "data", run + "_txt_files", files["thermo"].format(run=run))
 
     out_folder = os.path.join(project_root, output_config['base_folder'])
-    output_prefix = os.path.join(out_folder, output_config["prefix"] + "_" + run)
+    output_prefix = os.path.join(out_folder, output_config["prefix"])
 
     # read and process files
     trj, global2local, local2global, vel, force, stress, data, thermo_data = process_filename(trj_file,vel_file,force_file,stress_file,dat_file,thermo_file, thermo_process_ID=thermo_process_ID)
@@ -177,15 +175,43 @@ if "time_series_max_limit" in density_plotting_options:
 else:
     xlim_timeseries = (None, None)
 
+# getting equilibrium benchmark values
+equil_com_density = None
+equil_potassium_density = None
+equil_chloride_density = None
+equil_ionic_charge_density = None
+equil_oxygen_xx_stress = None
+equil_oxygen_yy_stress = None
+equil_oxygen_zz_stress = None
+equil_interfacial_temperature = None
+
+equilibrium_prefix = os.path.join(out_folder, "equil_globalnvt_frozen_0_7.5Ang")
+if Path(equilibrium_prefix+"_avg_com_density.txt").is_file():
+    _, equil_com_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_com_density.txt")
+if Path(equilibrium_prefix+"_avg_potassium_density.txt").is_file():
+    _, equil_potassium_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_potassium_density.txt")
+if Path(equilibrium_prefix+"_avg_chloride_density.txt").is_file():
+    _, equil_chloride_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_chloride_density.txt")
+if Path(equilibrium_prefix+"_avg_ionic_charge_density.txt").is_file():
+    _, equil_ionic_charge_density = read_timeseries_from_txt(equilibrium_prefix+"_avg_ionic_charge_density.txt")
+if Path(equilibrium_prefix+"_avg_oxygen_xx_stress.txt").is_file():
+    _, equil_oxygen_xx_stress = read_timeseries_from_txt(equilibrium_prefix+"_avg_oxygen_xx_stress.txt")
+if Path(equilibrium_prefix+"_avg_oxygen_yy_stress.txt").is_file():
+    _, equil_oxygen_yy_stress = read_timeseries_from_txt(equilibrium_prefix+"_avg_oxygen_yy_stress.txt")
+if Path(equilibrium_prefix+"_avg_oxygen_zz_stress.txt").is_file():
+    _, equil_oxygen_zz_stress = read_timeseries_from_txt(equilibrium_prefix+"_avg_oxygen_zz_stress.txt")
+if Path(equilibrium_prefix+"_avg_interfacial_temperature.txt").is_file():
+    _, equil_interfacial_temperature = read_timeseries_from_txt(equilibrium_prefix+"_avg_interfacial_temperature.txt")
+
 # plot and save averaged densities
-plot_time_series(time, avg_com_density, title="Average COM Density Over Time", xlabel="Time (fs)", ylabel="Density (molecules/Å^3)", output_file=output_prefix+"_avg_com_density.png", xlim=xlim_timeseries)
-plot_time_series(time, avg_potassium_density, title="Average Potassium Density Over Time", xlabel="Time (fs)", ylabel="Density (ions/Å^3)", output_file=output_prefix+"_avg_potassium_density.png", xlim=xlim_timeseries)
-plot_time_series(time, avg_chloride_density, title="Average Chloride Density Over Time", xlabel="Time (fs)", ylabel="Density (ions/Å^3)", output_file=output_prefix+"_avg_chloride_density.png", xlim=xlim_timeseries)
-plot_time_series(time, avg_ionic_charge_density, title="Average Ionic Charge Density Over Time", xlabel="Time (fs)", ylabel="Charge Density (e/Å^3)", output_file=output_prefix+"_avg_ionic_charge_density.png", xlim=xlim_timeseries)
-plot_time_series(time, avg_oxygen_xx_stress, title="Average Oxygen XX Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_xx_stress.png", xlim=xlim_timeseries)
-plot_time_series(time, avg_oxygen_yy_stress, title="Average Oxygen YY Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_yy_stress.png", xlim=xlim_timeseries)
-plot_time_series(time, avg_oxygen_zz_stress, title="Average Oxygen ZZ Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_zz_stress.png", xlim=xlim_timeseries)
-plot_time_series(thermo_time, avg_interfacial_temperature, title="Average Interfacial Temperature Over Time", xlabel="Time (fs)", ylabel="Temperature (K)", output_file=output_prefix+"_avg_interfacial_temperature.png", xlim=xlim_timeseries)  
+plot_time_series(time, avg_com_density, title="Average COM Density Over Time", xlabel="Time (fs)", ylabel="Density (molecules/Å^3)", output_file=output_prefix+"_avg_com_density.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_com_density), benchmark_std=np.std(equil_com_density))
+plot_time_series(time, avg_potassium_density, title="Average Potassium Density Over Time", xlabel="Time (fs)", ylabel="Density (ions/Å^3)", output_file=output_prefix+"_avg_potassium_density.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_potassium_density), benchmark_std=np.std(equil_potassium_density))
+plot_time_series(time, avg_chloride_density, title="Average Chloride Density Over Time", xlabel="Time (fs)", ylabel="Density (ions/Å^3)", output_file=output_prefix+"_avg_chloride_density.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_chloride_density), benchmark_std=np.std(equil_chloride_density))
+plot_time_series(time, avg_ionic_charge_density, title="Average Ionic Charge Density Over Time", xlabel="Time (fs)", ylabel="Charge Density (e/Å^3)", output_file=output_prefix+"_avg_ionic_charge_density.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_ionic_charge_density), benchmark_std=np.std(equil_ionic_charge_density))
+plot_time_series(time, avg_oxygen_xx_stress, title="Average Oxygen XX Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_xx_stress.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_oxygen_xx_stress), benchmark_std=np.std(equil_oxygen_xx_stress))
+plot_time_series(time, avg_oxygen_yy_stress, title="Average Oxygen YY Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_yy_stress.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_oxygen_yy_stress), benchmark_std=np.std(equil_oxygen_yy_stress))
+plot_time_series(time, avg_oxygen_zz_stress, title="Average Oxygen ZZ Stress Over Time", xlabel="Time (fs)", ylabel="Stress", output_file=output_prefix+"_avg_oxygen_zz_stress.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_oxygen_zz_stress), benchmark_std=np.std(equil_oxygen_zz_stress))
+plot_time_series(thermo_time, avg_interfacial_temperature, title="Average Interfacial Temperature Over Time", xlabel="Time (fs)", ylabel="Temperature (K)", output_file=output_prefix+"_avg_interfacial_temperature.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_interfacial_temperature), benchmark_std=np.std(equil_interfacial_temperature))  
 save_timeseries_as_txt(time, avg_com_density, output_filename=output_prefix+"_avg_com_density.txt")
 save_timeseries_as_txt(time, avg_potassium_density, output_filename=output_prefix+"_avg_potassium_density.txt")
 save_timeseries_as_txt(time, avg_chloride_density, output_filename=output_prefix+"_avg_chloride_density.txt")
