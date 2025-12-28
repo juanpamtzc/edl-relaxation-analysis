@@ -2,6 +2,7 @@
 base_path: "data/0.045Cpsqm_neg/equil_"
 runs:
   - "A"
+  - "B"
 
 files:
   trajectory: "equil_localnvt_frozen_0.045Cpsqm_neg_1.0M_KCl_.lammpstrj"
