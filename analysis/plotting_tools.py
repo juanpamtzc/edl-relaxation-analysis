@@ -3,7 +3,7 @@ import numpy as np
 from typing import Optional
 
 # FUTURE WORK: add support for multiple series on the same plot
-def plot_time_series(time: np.array, data: np.array, title: str, xlabel: str, ylabel: str, output_file: str, xlim: Optional[tuple] = None, ylim: Optional[tuple] = None, benchmark_mean: Optional[np.double] = None, benchmark_std: Optional[np.double] = None):
+def plot_time_series(time: np.array, data: np.array, title: str, xlabel: str, ylabel: str, output_file: str, xlim: Optional[tuple] = None, ylim: Optional[tuple] = None, benchmark_mean: Optional[np.double] = None, benchmark_std: Optional[np.double] = None, smoothed_data_fit: Optional[np.array] = None):
     """
     Plots a time series data.
 
@@ -18,10 +18,11 @@ def plot_time_series(time: np.array, data: np.array, title: str, xlabel: str, yl
         ylim (Optional[tuple]): The limits for the y-axis (min, max). Default is None.
         benchmark_mean (Optional[np.double]): A benchmark mean value to plot as a horizontal line. Default is None.
         benchmark_std (Optional[np.double]): A benchmark standard deviation to plot as dashed lines above and below the mean. Default is None.
+        smoothed_data_fit (Optional[np.array]): A numpy array containing smoothed data values to overlay on the plot. Default is None.
     """
 
     plt.figure(figsize=(10, 6))
-    plt.plot(time, data)
+    plt.plot(time, data, linestyle="-", linewidth=1.5, color="blue", label="Data", zorder=4)
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
@@ -35,6 +36,10 @@ def plot_time_series(time: np.array, data: np.array, title: str, xlabel: str, yl
         plt.plot(time, np.full_like(time, benchmark_mean), linestyle="--", linewidth=1.5, color="black", label="Benchmark Mean", zorder=2)
         if benchmark_std is not None:
             plt.fill_between(time, benchmark_mean - benchmark_std, benchmark_mean + benchmark_std, color="gray", alpha=0.2, label="Benchmark ±1σ", zorder=1)
+
+    if smoothed_data_fit is not None:
+        plt.plot(time, smoothed_data_fit, linestyle="-", linewidth=2, color="red", label="Smoothed Fit", zorder=3)
+        plt.legend()
 
     plt.grid(True)
     plt.savefig(output_file)
