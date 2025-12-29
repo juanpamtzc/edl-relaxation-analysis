@@ -2,7 +2,7 @@ from scipy.interpolate import UnivariateSpline
 import numpy as np
 from typing import Optional
 
-def find_critical_points_via_spline_fitting(x: np.array, y: np.array, smoothing_factor: Optional[float] = 1.0, spline_order: Optional[int] = 3) -> tuple:
+def find_critical_points_via_spline_fitting(x: np.array, y: np.array, smoothing_factor: Optional[float] = 10.0, spline_order: Optional[int] = 3) -> tuple:
     """
     Fits smoothing spline to the data given.
 
