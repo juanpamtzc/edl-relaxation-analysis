@@ -51,45 +51,78 @@ carbon_positions:
   zlo: 5.0
   
 plotting_options:
-  water_density_xlo: -2.0
-  water_density_xhi: 2.0
-  water_density_ylo: 0.016
-  water_density_yhi: 0.026
-
-  potassium_density_xlo: -2.0
-  potassium_density_xhi: 2.0
-  potassium_density_ylo: 0.00005
-  potassium_density_yhi: 0.0004
-
-  chloride_density_xlo: -2.0
-  chloride_density_xhi: 2.0
-  chloride_density_ylo: 0.00005
-  chloride_density_yhi: 0.0004
-
-  ionic_charge_density_xlo: -2.0
-  ionic_charge_density_xhi: 2.0
-  ionic_charge_density_ylo: -0.0004
-  ionic_charge_density_yhi: 0.0004
-
-  xx_stress_xlo: -2.0
-  xx_stress_xhi: 2.0
-  xx_stress_ylo: -1400000
-  xx_stress_yhi: -500000
-
-  yy_stress_xlo: -2.0
-  yy_stress_xhi: 2.0
-  yy_stress_ylo: -1400000
-  yy_stress_yhi: -500000
-
-  zz_stress_xlo: -2.0
-  zz_stress_xhi: 2.0
-  zz_stress_ylo: -800000
-  zz_stress_yhi: 2000000
-
-  temp_xlo: -2.0
-  temp_xhi: 2.0
-  temp_ylo: 240
-  temp_yhi: 600
+  water_density:
+    time_series:
+      smoothing_factor: 2.0
+      spline_order: 4
+    hysteresis:
+      xlo: -2.0
+      xhi: 2.0
+      ylo: 0.016
+      yhi: 0.026
+  potassium_density:
+    time_series:
+      smoothing_factor: 2.0
+      spline_order: 4
+    hysteresis:
+      xlo: -2.0
+      xhi: 2.0
+      ylo: 0.00005
+      yhi: 0.0004
+  chloride_density:
+    time_series:
+      smoothing_factor: 2.0
+      spline_order: 4
+    hysteresis:
+      xlo: -2.0
+      xhi: 2.0
+      ylo: 0.00005
+      yhi: 0.0004
+  ionic_charge_density:
+    time_series:
+      smoothing_factor: 2.0
+      spline_order: 4
+    hysteresis:
+      xlo: -2.0
+      xhi: 2.0
+      ylo: -0.0004
+      yhi: 0.0004
+  oxygen_xx_stress:
+    time_series:
+      smoothing_factor: 2.0
+      spline_order: 4
+    hysteresis:
+      xlo: -2.0
+      xhi: 2.0
+      ylo: -1400000
+      yhi: -500000
+  oxygen_yy_stress:
+    time_series:
+      smoothing_factor: 2.0
+      spline_order: 4
+    hysteresis:
+      xlo: -2.0
+      xhi: 2.0
+      ylo: -1400000
+      yhi: -500000
+  oxygen_zz_stress:
+    time_series:
+      smoothing_factor: 2.0
+      spline_order: 4
+    hysteresis:
+      xlo: -2.0
+      xhi: 2.0
+      ylo: -800000
+      yhi: 2000000
+  interfacial_temperature:
+    time_series:
+      smoothing_factor: 2.0
+      spline_order: 4
+    hysteresis:
+      xlo: -2.0
+      xhi: 2.0
+      ylo: 240
+      yhi: 400
 
 equilibrium_benchmark_prefix: "equil_globalnvt_frozen_pos_7.5Ang"
 
