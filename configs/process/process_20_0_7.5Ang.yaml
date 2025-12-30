@@ -54,7 +54,7 @@ plotting_options:
   water_density:
     time_series:
       smoothing_factor: 2.0
-      spline_order: 3
+      spline_order: 4
     hysteresis:
       xlo: -2.0
       xhi: 2.0
@@ -63,7 +63,7 @@ plotting_options:
   potassium_density:
     time_series:
       smoothing_factor: 2.0
-      spline_order: 3
+      spline_order: 4
     hysteresis:
       xlo: -2.0
       xhi: 2.0
@@ -72,7 +72,7 @@ plotting_options:
   chloride_density:
     time_series:
       smoothing_factor: 2.0
-      spline_order: 3
+      spline_order: 4
     hysteresis:
       xlo: -2.0
       xhi: 2.0
@@ -81,7 +81,7 @@ plotting_options:
   ionic_charge_density:
     time_series:
       smoothing_factor: 2.0
-      spline_order: 3
+      spline_order: 4
     hysteresis:
       xlo: -2.0
       xhi: 2.0
@@ -90,7 +90,7 @@ plotting_options:
   oxygen_xx_stress:
     time_series:
       smoothing_factor: 2.0
-      spline_order: 3
+      spline_order: 4
     hysteresis:
       xlo: -2.0
       xhi: 2.0
@@ -99,7 +99,7 @@ plotting_options:
   oxygen_yy_stress:
     time_series:
       smoothing_factor: 2.0
-      spline_order: 3
+      spline_order: 4
     hysteresis:
       xlo: -2.0
       xhi: 2.0
@@ -108,7 +108,7 @@ plotting_options:
   oxygen_zz_stress:
     time_series:
       smoothing_factor: 2.0
-      spline_order: 3
+      spline_order: 4
     hysteresis:
       xlo: -2.0
       xhi: 2.0
@@ -117,7 +117,7 @@ plotting_options:
   interfacial_temperature:
     time_series:
       smoothing_factor: 2.0
-      spline_order: 3
+      spline_order: 4
     hysteresis:
       xlo: -2.0
       xhi: 2.0
