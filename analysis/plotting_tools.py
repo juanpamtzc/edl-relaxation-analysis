@@ -91,3 +91,46 @@ def plot_2d_heatmap(data: np.array, xlim: tuple, ylim: tuple, title: str, xlabel
     plt.savefig(output_file)
     plt.close()
 
+def plot_loglog(x: np.array, y: np.array, title: str, xlabel: str, ylabel: str, output_file: str):
+    """
+    Plots data on a log-log scale.
+
+    Args:
+        x:                      A numpy array containing x values.
+        y:                      A numpy array containing y values.
+        title:                  The title of the plot.
+        xlabel:                 The label for the x-axis.
+        ylabel:                 The label for the y-axis.
+        output_file:            The filename where the plot will be saved.
+    """
+
+    plt.figure(figsize=(10, 6))
+    plt.loglog(x, y, linestyle="-", linewidth=1.5, color="blue")
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(True, which="both", ls="--")
+    plt.savefig(output_file)
+    plt.close()
+
+def plot_semilogy(x: np.array, y: np.array, title: str, xlabel: str, ylabel: str, output_file: str):
+    """
+    Plots data on a semi-logarithmic scale (y-axis logarithmic).
+
+    Args:
+        x:                      A numpy array containing x values.
+        y:                      A numpy array containing y values.
+        title:                  The title of the plot.
+        xlabel:                 The label for the x-axis.
+        ylabel:                 The label for the y-axis.
+        output_file:            The filename where the plot will be saved.
+    """
+
+    plt.figure(figsize=(10, 6))
+    plt.semilogy(x, y, linestyle="-", linewidth=1.5, color="blue")
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(True, which="both", ls="--")
+    plt.savefig(output_file)
+    plt.close()
