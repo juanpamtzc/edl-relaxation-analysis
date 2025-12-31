@@ -113,7 +113,7 @@ def plot_loglog(x: np.array, y: np.array, title: str, xlabel: str, ylabel: str, 
     plt.savefig(output_file)
     plt.close()
 
-def plot_semilogy(x: np.array, y: np.array, title: str, xlabel: str, ylabel: str, output_file: str):
+def plot_semilogy(x: np.array, y: np.array, title: str, xlabel: str, ylabel: str, output_file: str, xlim: Optional[tuple] = None):
     """
     Plots data on a semi-logarithmic scale (y-axis logarithmic).
 
@@ -124,6 +124,7 @@ def plot_semilogy(x: np.array, y: np.array, title: str, xlabel: str, ylabel: str
         xlabel:                 The label for the x-axis.
         ylabel:                 The label for the y-axis.
         output_file:            The filename where the plot will be saved.
+        xlim (Optional[tuple]): The limits for the x-axis (min, max). Default is None.
     """
 
     plt.figure(figsize=(10, 6))
@@ -132,5 +133,9 @@ def plot_semilogy(x: np.array, y: np.array, title: str, xlabel: str, ylabel: str
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.grid(True, which="both", ls="--")
+
+    if xlim:
+        plt.xlim(xlim)
+
     plt.savefig(output_file)
     plt.close()

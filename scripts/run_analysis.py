@@ -153,8 +153,8 @@ avg_interfacial_temperature = np.mean(np.array(global_interfacial_temperature), 
 std_interfacial_temperature = np.std(np.array(global_interfacial_temperature), axis=0)
 
 # set timeseries xlim
-if "time_series_max_limit" in config['plotting_options']:
-    xlim_timeseries = (0, config['plotting_options']["time_series_max_limit"])
+if "xlo" in config['plotting_options']['time_series'] and "xhi" in config['plotting_options']['time_series']:
+    xlim_timeseries = (config['plotting_options']['time_series']["xlo"], config['plotting_options']['time_series']["xhi"])
 else:
     xlim_timeseries = (None, None)
 
@@ -192,14 +192,14 @@ if 'equilibrium_benchmark_prefix' in config:
         _, equil_interfacial_temperature = read_timeseries_from_txt(equilibrium_prefix+"_avg_interfacial_temperature.txt")
 
 if config['trajectory_type']=='relaxation' and 'equilibrium_benchmark_prefix' in config:
-    plot_semilogy(time, np.abs(avg_com_density - np.mean(equil_com_density)), title="Relaxation of COM Density", xlabel="Time (fs)", ylabel="|COM Density - Equilibrium COM Density| (molecules/Å^3)", output_file=output_prefix+"_relaxation_com_density.png")
-    plot_semilogy(time, np.abs(avg_potassium_density - np.mean(equil_potassium_density)), title="Relaxation of Potassium Density", xlabel="Time (fs)", ylabel="|Potassium Density - Equilibrium Potassium Density| (ions/Å^3)", output_file=output_prefix+"_relaxation_potassium_density.png")
-    plot_semilogy(time, np.abs(avg_chloride_density - np.mean(equil_chloride_density)), title="Relaxation of Chloride Density", xlabel="Time (fs)", ylabel="|Chloride Density - Equilibrium Chloride Density| (ions/Å^3)", output_file=output_prefix+"_relaxation_chloride_density.png")
-    plot_semilogy(time, np.abs(avg_ionic_charge_density - np.mean(equil_ionic_charge_density)), title="Relaxation of Ionic Charge Density", xlabel="Time (fs)", ylabel="|Ionic Charge Density - Equilibrium Ionic Charge Density| (e/Å^3)", output_file=output_prefix+"_relaxation_ionic_charge_density.png")
-    plot_semilogy(time, np.abs(avg_oxygen_xx_stress - np.mean(equil_oxygen_xx_stress)), title="Relaxation of Oxygen XX Stress", xlabel="Time (fs)", ylabel="|Oxygen XX Stress - Equilibrium Oxygen XX Stress|", output_file=output_prefix+"_relaxation_oxygen_xx_stress.png")
-    plot_semilogy(time, np.abs(avg_oxygen_yy_stress - np.mean(equil_oxygen_yy_stress)), title="Relaxation of Oxygen YY Stress", xlabel="Time (fs)", ylabel="|Oxygen YY Stress - Equilibrium Oxygen YY Stress|", output_file=output_prefix+"_relaxation_oxygen_yy_stress.png")
-    plot_semilogy(time, np.abs(avg_oxygen_zz_stress - np.mean(equil_oxygen_zz_stress)), title="Relaxation of Oxygen ZZ Stress", xlabel="Time (fs)", ylabel="|Oxygen ZZ Stress - Equilibrium Oxygen ZZ Stress|", output_file=output_prefix+"_relaxation_oxygen_zz_stress.png")
-    plot_semilogy(thermo_time, np.abs(avg_interfacial_temperature - np.mean(equil_interfacial_temperature)), title="Relaxation of Interfacial Temperature", xlabel="Time (fs)", ylabel="|Interfacial Temperature - Equilibrium Interfacial Temperature| (K)", output_file=output_prefix+"_relaxation_interfacial_temperature.png")
+    plot_semilogy(time, np.abs(avg_com_density - np.mean(equil_com_density)), title="Relaxation of COM Density", xlabel="Time (fs)", ylabel="|COM Density - Equilibrium COM Density| (molecules/Å^3)", output_file=output_prefix+"_relaxation_com_density.png", xlim=xlim_timeseries)
+    plot_semilogy(time, np.abs(avg_potassium_density - np.mean(equil_potassium_density)), title="Relaxation of Potassium Density", xlabel="Time (fs)", ylabel="|Potassium Density - Equilibrium Potassium Density| (ions/Å^3)", output_file=output_prefix+"_relaxation_potassium_density.png", xlim=xlim_timeseries)
+    plot_semilogy(time, np.abs(avg_chloride_density - np.mean(equil_chloride_density)), title="Relaxation of Chloride Density", xlabel="Time (fs)", ylabel="|Chloride Density - Equilibrium Chloride Density| (ions/Å^3)", output_file=output_prefix+"_relaxation_chloride_density.png", xlim=xlim_timeseries)
+    plot_semilogy(time, np.abs(avg_ionic_charge_density - np.mean(equil_ionic_charge_density)), title="Relaxation of Ionic Charge Density", xlabel="Time (fs)", ylabel="|Ionic Charge Density - Equilibrium Ionic Charge Density| (e/Å^3)", output_file=output_prefix+"_relaxation_ionic_charge_density.png", xlim=xlim_timeseries)
+    plot_semilogy(time, np.abs(avg_oxygen_xx_stress - np.mean(equil_oxygen_xx_stress)), title="Relaxation of Oxygen XX Stress", xlabel="Time (fs)", ylabel="|Oxygen XX Stress - Equilibrium Oxygen XX Stress|", output_file=output_prefix+"_relaxation_oxygen_xx_stress.png", xlim=xlim_timeseries)
+    plot_semilogy(time, np.abs(avg_oxygen_yy_stress - np.mean(equil_oxygen_yy_stress)), title="Relaxation of Oxygen YY Stress", xlabel="Time (fs)", ylabel="|Oxygen YY Stress - Equilibrium Oxygen YY Stress|", output_file=output_prefix+"_relaxation_oxygen_yy_stress.png", xlim=xlim_timeseries)
+    plot_semilogy(time, np.abs(avg_oxygen_zz_stress - np.mean(equil_oxygen_zz_stress)), title="Relaxation of Oxygen ZZ Stress", xlabel="Time (fs)", ylabel="|Oxygen ZZ Stress - Equilibrium Oxygen ZZ Stress|", output_file=output_prefix+"_relaxation_oxygen_zz_stress.png", xlim=xlim_timeseries)
+    plot_semilogy(thermo_time, np.abs(avg_interfacial_temperature - np.mean(equil_interfacial_temperature)), title="Relaxation of Interfacial Temperature", xlabel="Time (fs)", ylabel="|Interfacial Temperature - Equilibrium Interfacial Temperature| (K)", output_file=output_prefix+"_relaxation_interfacial_temperature.png", xlim=xlim_timeseries)
 
 
 # plot and save averaged densities
