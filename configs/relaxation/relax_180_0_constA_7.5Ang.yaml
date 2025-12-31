@@ -53,6 +53,8 @@ carbon_positions:
 plotting_options:
   water_density:
     time_series:
+      xlo: 0
+      xhi: 50000
       smoothing_factor: 2.0
       spline_order: 4
     hysteresis:
@@ -62,6 +64,8 @@ plotting_options:
       yhi: 0.026
   potassium_density:
     time_series:
+      xlo: 0
+      xhi: 50000
       smoothing_factor: 2.0
       spline_order: 4
     hysteresis:
@@ -71,6 +75,8 @@ plotting_options:
       yhi: 0.0004
   chloride_density:
     time_series:
+      xlo: 0
+      xhi: 50000
       smoothing_factor: 2.0
       spline_order: 4
     hysteresis:
@@ -80,6 +86,8 @@ plotting_options:
       yhi: 0.0004
   ionic_charge_density:
     time_series:
+      xlo: 0
+      xhi: 50000
       smoothing_factor: 2.0
       spline_order: 4
     hysteresis:
@@ -89,6 +97,8 @@ plotting_options:
       yhi: 0.0004
   oxygen_xx_stress:
     time_series:
+      xlo: 0
+      xhi: 50000
       smoothing_factor: 2.0
       spline_order: 4
     hysteresis:
@@ -98,6 +108,8 @@ plotting_options:
       yhi: -500000
   oxygen_yy_stress:
     time_series:
+      xlo: 0
+      xhi: 50000
       smoothing_factor: 2.0
       spline_order: 4
     hysteresis:
@@ -107,6 +119,8 @@ plotting_options:
       yhi: -500000
   oxygen_zz_stress:
     time_series:
+      xlo: 0
+      xhi: 50000
       smoothing_factor: 2.0
       spline_order: 4
     hysteresis:
@@ -116,6 +130,8 @@ plotting_options:
       yhi: 2000000
   interfacial_temperature:
     time_series:
+      xlo: 0
+      xhi: 50000
       smoothing_factor: 2.0
       spline_order: 4
     hysteresis:
