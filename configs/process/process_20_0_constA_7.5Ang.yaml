@@ -4,6 +4,7 @@ runs:
   - "A"
   - "B"
   - "C"
+  - "D"
 
 files:
   trajectory: "process_0Cpsqm_1.0M_KCl_20_constA_.lammpstrj"
@@ -49,6 +50,11 @@ velocity_distribution:
 
 carbon_positions:
   zlo: 5.0
+
+transient_density_profile:
+  zlo: -5.0
+  zhi: 20.0
+  bin_width: 0.1
 
 plotting_options:
   water_density:
