@@ -16,7 +16,7 @@ if project_root not in sys.path:
 
 from analysis.data_processing_tools import process_filename, save_timeseries_as_txt, read_timeseries_from_txt
 from analysis.angular_analysis_tools import COM_trj, compute_local_basis_unit_vectors, arrange_trj_data_by_molecules, unwrap_trj
-from analysis.transient_analysis_tools import compute_region_density_over_time, compute_velocity_distribution_in_region, find_lower_wall_z_coordinates, compute_average_property_over_time
+from analysis.transient_analysis_tools import compute_region_density_over_time, compute_velocity_distribution_in_region, find_lower_wall_z_coordinates, compute_average_property_over_time, compute_transient_density_profile
 from analysis.plotting_tools import plot_time_series, plot_distribution_function, plot_2d_heatmap, plot_loglog, plot_semilogy
 from analysis.smoothing_tools import find_critical_points_via_spline_fitting
 
@@ -41,6 +41,9 @@ global_oxygen_xx_stress = []
 global_oxygen_yy_stress = []
 global_oxygen_zz_stress = []
 global_interfacial_temperature = []
+global_transient_com_density = []
+global_transient_potassium_density = []
+global_transient_chloride_density = []
 
 # loop over all the runs
 for run in config['runs']:
@@ -107,12 +110,22 @@ for run in config['runs']:
     time, potassium_density = compute_region_density_over_time(positions_K, zlo=config['region']["zlo"], zhi=config['region']["zhi"], dt=config['dt'], cross_sectional_area=box_size[0]*box_size[1],plot=False)
     time, chloride_density = compute_region_density_over_time(positions_Cl, zlo=config['region']["zlo"], zhi=config['region']["zhi"], dt=config['dt'], cross_sectional_area=box_size[0]*box_size[1],plot=False)
     ionic_charge_density = potassium_density * 1.00000 + chloride_density * -1.00000
+
+    if config['trajectory_type']=='process':
+        bin_centers, density_profile_COM, time = compute_transient_density_profile(positions_COM, zlo=config['transient_density_profile']['zlo'], zhi=config['transient_density_profile']['zhi'], bin_width=config['transient_density_profile']['bin_width'], dt=config['dt'], plot=False)
+        bin_centers, density_profile_K, time = compute_transient_density_profile(positions_K, zlo=config['transient_density_profile']['zlo'], zhi=config['transient_density_profile']['zhi'], bin_width=config['transient_density_profile']['bin_width'], dt=config['dt'], plot=False)
+        bin_centers, density_profile_Cl, time = compute_transient_density_profile(positions_Cl, zlo=config['transient_density_profile']['zlo'], zhi=config['transient_density_profile']['zhi'], bin_width=config['transient_density_profile']['bin_width'], dt=config['dt'], plot=False)
     
     # collect densities for global averaging
     global_com_density.append(com_density)
     global_potassium_density.append(potassium_density)
     global_chloride_density.append(chloride_density)
     global_ionic_charge_density.append(ionic_charge_density)
+
+    if config['trajectory_type']=='process':
+        global_transient_com_density.append(density_profile_COM)
+        global_transient_potassium_density.append(density_profile_K)
+        global_transient_chloride_density.append(density_profile_Cl)
 
     # Stress analysis
     time, oxygen_xx_stress = compute_average_property_over_time(positions_COM, stresses_oxygens, zlo=config['region']["zlo"], zhi=config['region']["zhi"], dt=config['dt'],component=0,plot=False)
@@ -138,6 +151,11 @@ std_com_density = np.std(np.array(global_com_density), axis=0)
 std_potassium_density = np.std(np.array(global_potassium_density), axis=0)
 std_chloride_density = np.std(np.array(global_chloride_density), axis=0)
 std_ionic_charge_density = np.std(np.array(global_ionic_charge_density), axis=0)
+
+if config['trajectory_type']=='process':
+    avg_com_transient_density = np.mean(np.array(global_transient_com_density), axis=0)
+    avg_potassium_transient_density = np.mean(np.array(global_transient_potassium_density), axis=0)
+    avg_chloride_transient_density = np.mean(np.array(global_transient_chloride_density), axis=0)
 
 # average stresses over all runs
 avg_oxygen_xx_stress = np.mean(np.array(global_oxygen_xx_stress), axis=0)
@@ -201,7 +219,6 @@ if config['trajectory_type']=='relaxation' and 'equilibrium_benchmark_prefix' in
     plot_semilogy(time, np.abs(avg_oxygen_zz_stress - np.mean(equil_oxygen_zz_stress)), title="Relaxation of Oxygen ZZ Stress", xlabel="Time (fs)", ylabel="|Oxygen ZZ Stress - Equilibrium Oxygen ZZ Stress|", output_file=output_prefix+"_relaxation_oxygen_zz_stress.png", xlim=xlim_timeseries)
     plot_semilogy(thermo_time, np.abs(avg_interfacial_temperature - np.mean(equil_interfacial_temperature)), title="Relaxation of Interfacial Temperature", xlabel="Time (fs)", ylabel="|Interfacial Temperature - Equilibrium Interfacial Temperature| (K)", output_file=output_prefix+"_relaxation_interfacial_temperature.png", xlim=xlim_timeseries)
 
-
 # plot and save averaged densities
 plot_time_series(time, avg_com_density, title="Average COM Density Over Time", xlabel="Time (fs)", ylabel="Density (molecules/Å^3)", output_file=output_prefix+"_avg_com_density.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_com_density) if equil_com_density is not None else None, benchmark_std=np.std(equil_com_density) if equil_com_density is not None else None, smoothed_data_fit=None)
 plot_time_series(time, avg_potassium_density, title="Average Potassium Density Over Time", xlabel="Time (fs)", ylabel="Density (ions/Å^3)", output_file=output_prefix+"_avg_potassium_density.png", xlim=xlim_timeseries, benchmark_mean=np.mean(equil_potassium_density) if equil_potassium_density is not None else None, benchmark_std=np.std(equil_potassium_density) if equil_potassium_density is not None else None, smoothed_data_fit=None)
@@ -219,6 +236,12 @@ save_timeseries_as_txt(time, avg_oxygen_xx_stress, output_filename=output_prefix
 save_timeseries_as_txt(time, avg_oxygen_yy_stress, output_filename=output_prefix+"_avg_oxygen_yy_stress.txt")
 save_timeseries_as_txt(time, avg_oxygen_zz_stress, output_filename=output_prefix+"_avg_oxygen_zz_stress.txt")
 save_timeseries_as_txt(thermo_time, avg_interfacial_temperature, output_filename=output_prefix+"_avg_interfacial_temperature.txt")
+
+if config['trajectory_type']=='process':
+    # plot and save averaged transient density profiles
+    plot_2d_heatmap(bin_centers, time, avg_com_transient_density.T, title="Average Transient COM Density Profile", xlabel="Z Position (Å)", ylabel="Time (fs)", output_file=output_prefix+"_avg_transient_com_density.png", xlim=(config['transient_density_profile']['zlo'], config['transient_density_profile']['zhi']), ylim=(None, None), colorbar_label="Density (molecules/Å^3)")
+    plot_2d_heatmap(bin_centers, time, avg_potassium_transient_density.T, title="Average Transient Potassium Density Profile", xlabel="Z Position (Å)", ylabel="Time (fs)", output_file=output_prefix+"_avg_transient_potassium_density.png", xlim=(config['transient_density_profile']['zlo'], config['transient_density_profile']['zhi']), ylim=(None, None), colorbar_label="Density (ions/Å^3)")
+    plot_2d_heatmap(bin_centers, time, avg_chloride_transient_density.T, title="Average Transient Chloride Density Profile", xlabel="Z Position (Å)", ylabel="Time (fs)", output_file=output_prefix+"_avg_transient_chloride_density.png", xlim=(config['transient_density_profile']['zlo'], config['transient_density_profile']['zhi']), ylim=(None, None), colorbar_label="Density (ions/Å^3)")
 
 # plot hysteresis loops
 if config['trajectory_type']=="process":
