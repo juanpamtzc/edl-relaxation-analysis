@@ -3,3 +3,5 @@ data/
 *.png
 
 scratch/
+
+.DS_Store
