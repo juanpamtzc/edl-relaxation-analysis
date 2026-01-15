@@ -242,19 +242,19 @@ def compute_region_density_over_time(positions, zlo=0.0, zhi=7.5, dt=1.0, cross_
 
     return time, density
 
-def compute_transient_density_profile(positions, z_min, z_max, n_bins, dt=1.0, plot=True, plot_prefix="transient_density_profile"):
+def compute_transient_density_profile(positions, zlo=0.0, zhi=7.5, bin_width=0.1, dt=1.0, plot=True, plot_prefix="transient_density_profile"):
     """
     Computes the transient density profile along the z-axis over time.
 
     Parameters:
     - positions: np.ndarray of shape (n_steps, n_atoms, 3)
         The positions of atoms over time.
-    - z_min: float
+    - zlo: float
         Minimum z-coordinate for the profile.
-    - z_max: float
+    - zhi: float
         Maximum z-coordinate for the profile.
-    - n_bins: int
-        Number of bins for the histogram.
+    - bin_width: float
+        Width of each bin for the histogram.
     - dt: float
         Time interval between steps.
     - plot: bool
@@ -271,7 +271,8 @@ def compute_transient_density_profile(positions, z_min, z_max, n_bins, dt=1.0, p
         Time axis corresponding to the density profile.
     """
     n_steps = positions.shape[0]
-    bin_edges = np.linspace(z_min, z_max, n_bins + 1)
+    n_bins = int((zhi - zlo) / bin_width)
+    bin_edges = np.linspace(zlo, zhi, n_bins + 1)
     bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
     density_profile = np.zeros((n_steps, n_bins))
 
@@ -284,7 +285,7 @@ def compute_transient_density_profile(positions, z_min, z_max, n_bins, dt=1.0, p
 
     if plot:
         plt.figure(figsize=(10, 6))
-        plt.imshow(density_profile.T, extent=[time[0], time[-1], z_min, z_max], aspect='auto', origin='lower', cmap='viridis')
+        plt.imshow(density_profile.T, extent=[time[0], time[-1], zlo, zhi], aspect='auto', origin='lower', cmap='viridis')
         plt.colorbar(label='Density')
         plt.xlabel('Time')
         plt.ylabel('Z-coordinate')
