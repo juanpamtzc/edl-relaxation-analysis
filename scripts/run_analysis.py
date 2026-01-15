@@ -171,10 +171,12 @@ avg_interfacial_temperature = np.mean(np.array(global_interfacial_temperature), 
 std_interfacial_temperature = np.std(np.array(global_interfacial_temperature), axis=0)
 
 # set timeseries xlim
-if "xlo" in config['plotting_options']['time_series'] and "xhi" in config['plotting_options']['time_series']:
-    xlim_timeseries = (config['plotting_options']['time_series']["xlo"], config['plotting_options']['time_series']["xhi"])
-else:
-    xlim_timeseries = (None, None)
+#if "xlo" in config['plotting_options']['time_series'] and "xhi" in config['plotting_options']['time_series']:
+#    xlim_timeseries = (config['plotting_options']['time_series']["xlo"], config['plotting_options']['time_series']["xhi"])
+#else:
+#    xlim_timeseries = (None, None)
+
+xlim_timeseries = (None, None)
 
 # getting equilibrium benchmark values
 equil_com_density = None
