@@ -241,3 +241,55 @@ def compute_region_density_over_time(positions, zlo=0.0, zhi=7.5, dt=1.0, cross_
         plt.close()
 
     return time, density
+
+def compute_transient_density_profile(positions, z_min, z_max, n_bins, dt=1.0, plot=True, plot_prefix="transient_density_profile"):
+    """
+    Computes the transient density profile along the z-axis over time.
+
+    Parameters:
+    - positions: np.ndarray of shape (n_steps, n_atoms, 3)
+        The positions of atoms over time.
+    - z_min: float
+        Minimum z-coordinate for the profile.
+    - z_max: float
+        Maximum z-coordinate for the profile.
+    - n_bins: int
+        Number of bins for the histogram.
+    - dt: float
+        Time interval between steps.
+    - plot: bool
+        Whether to plot the density profile.
+    - plot_prefix: str
+        Prefix for the output plot file.
+
+    Returns:
+    - bin_centers: np.ndarray
+        Centers of the bins along the z-axis.
+    - density_profile: np.ndarray
+        Density profile as a function of z and time.
+    - time: np.ndarray
+        Time axis corresponding to the density profile.
+    """
+    n_steps = positions.shape[0]
+    bin_edges = np.linspace(z_min, z_max, n_bins + 1)
+    bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+    density_profile = np.zeros((n_steps, n_bins))
+
+    for t in range(n_steps):
+        z_coords = positions[t, :, 2]
+        hist, _ = np.histogram(z_coords, bins=bin_edges)
+        density_profile[t, :] = hist / (bin_edges[1] - bin_edges[0])  # Normalize by bin width
+
+    time = np.arange(n_steps) * dt
+
+    if plot:
+        plt.figure(figsize=(10, 6))
+        plt.imshow(density_profile.T, extent=[time[0], time[-1], z_min, z_max], aspect='auto', origin='lower', cmap='viridis')
+        plt.colorbar(label='Density')
+        plt.xlabel('Time')
+        plt.ylabel('Z-coordinate')
+        plt.title('Transient Density Profile Along Z-axis Over Time')
+        plt.savefig(f"{plot_prefix}.png")
+        plt.close()
+
+    return bin_centers, density_profile, time
