@@ -242,7 +242,7 @@ def compute_region_density_over_time(positions, zlo=0.0, zhi=7.5, dt=1.0, cross_
 
     return time, density
 
-def compute_transient_density_profile(positions, zlo=0.0, zhi=7.5, bin_width=0.1, dt=1.0, plot=True, plot_prefix="transient_density_profile"):
+def compute_transient_density_profile(positions, zlo=0.0, zhi=7.5, cross_sectional_area=1.0, bin_width=0.1, dt=1.0, plot=True, plot_prefix="transient_density_profile"):
     """
     Computes the transient density profile along the z-axis over time.
 
@@ -279,7 +279,8 @@ def compute_transient_density_profile(positions, zlo=0.0, zhi=7.5, bin_width=0.1
     for t in range(n_steps):
         z_coords = positions[t, :, 2]
         hist, _ = np.histogram(z_coords, bins=bin_edges)
-        density_profile[t, :] = hist / (bin_edges[1] - bin_edges[0])  # Normalize by bin width
+        volume = bin_width * cross_sectional_area
+        density_profile[t, :] = hist / volume  # Normalize by volume
 
     time = np.arange(n_steps) * dt
 
