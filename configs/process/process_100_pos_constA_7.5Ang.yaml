@@ -54,7 +54,7 @@ carbon_positions:
 transient_density_profile:
   zlo: -5.0
   zhi: 20.0
-  bin_width: 0.1
+  bin_width: 0.5
   
 plotting_options:
   water_density:
