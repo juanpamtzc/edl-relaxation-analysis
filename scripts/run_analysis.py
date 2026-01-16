@@ -241,9 +241,9 @@ save_timeseries_as_txt(thermo_time, avg_interfacial_temperature, output_filename
 
 if config['trajectory_type']=='process':
     # plot and save averaged transient density profiles
-    plot_2d_heatmap(avg_com_transient_density.T, xlim=(config['transient_density_profile']['zlo'], config['transient_density_profile']['zhi']), ylim=(None, None), title="Average Transient COM Density Profile", xlabel="Z Position (Å)", ylabel="Time (fs)", colormap_label="Density (molecules/Å^3)", output_file=output_prefix+"_avg_transient_com_density.png")
-    plot_2d_heatmap(avg_potassium_transient_density.T, xlim=(config['transient_density_profile']['zlo'], config['transient_density_profile']['zhi']), ylim=(None, None), title="Average Transient Potassium Density Profile", xlabel="Z Position (Å)", ylabel="Time (fs)", colormap_label="Density (ions/Å^3)", output_file=output_prefix+"_avg_transient_potassium_density.png")
-    plot_2d_heatmap(avg_chloride_transient_density.T, xlim=(config['transient_density_profile']['zlo'], config['transient_density_profile']['zhi']), ylim=(None, None), title="Average Transient Chloride Density Profile", xlabel="Z Position (Å)", ylabel="Time (fs)", colormap_label="Density (ions/Å^3)", output_file=output_prefix+"_avg_transient_chloride_density.png")
+    plot_2d_heatmap(avg_com_transient_density.T, xlim=(config['transient_density_profile']['zlo'], config['transient_density_profile']['zhi']), ylim=(0, time[-1]), title="Average Transient COM Density Profile", xlabel="Z Position (Å)", ylabel="Time (fs)", colormap_label="Density (molecules/Å^3)", output_file=output_prefix+"_avg_transient_com_density.png")
+    plot_2d_heatmap(avg_potassium_transient_density.T, xlim=(config['transient_density_profile']['zlo'], config['transient_density_profile']['zhi']), ylim=(0, time[-1]), title="Average Transient Potassium Density Profile", xlabel="Z Position (Å)", ylabel="Time (fs)", colormap_label="Density (ions/Å^3)", output_file=output_prefix+"_avg_transient_potassium_density.png")
+    plot_2d_heatmap(avg_chloride_transient_density.T, xlim=(config['transient_density_profile']['zlo'], config['transient_density_profile']['zhi']), ylim=(0, time[-1]), title="Average Transient Chloride Density Profile", xlabel="Z Position (Å)", ylabel="Time (fs)", colormap_label="Density (ions/Å^3)", output_file=output_prefix+"_avg_transient_chloride_density.png")
 
 # plot hysteresis loops
 if config['trajectory_type']=="process":
