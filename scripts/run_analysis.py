@@ -112,9 +112,9 @@ for run in config['runs']:
     ionic_charge_density = potassium_density * 1.00000 + chloride_density * -1.00000
 
     if config['trajectory_type']=='process':
-        bin_centers, density_profile_COM, time = compute_transient_density_profile(positions_COM, zlo=config['transient_density_profile']['zlo'], zhi=config['transient_density_profile']['zhi'], bin_width=config['transient_density_profile']['bin_width'], dt=config['dt'], plot=False)
-        bin_centers, density_profile_K, time = compute_transient_density_profile(positions_K, zlo=config['transient_density_profile']['zlo'], zhi=config['transient_density_profile']['zhi'], bin_width=config['transient_density_profile']['bin_width'], dt=config['dt'], plot=False)
-        bin_centers, density_profile_Cl, time = compute_transient_density_profile(positions_Cl, zlo=config['transient_density_profile']['zlo'], zhi=config['transient_density_profile']['zhi'], bin_width=config['transient_density_profile']['bin_width'], dt=config['dt'], plot=False)
+        bin_centers, density_profile_COM, time = compute_transient_density_profile(positions_COM, zlo=config['transient_density_profile']['zlo'], zhi=config['transient_density_profile']['zhi'], cross_sectional_area=box_size[0]*box_size[1],bin_width=config['transient_density_profile']['bin_width'], dt=config['dt'], plot=False)
+        bin_centers, density_profile_K, time = compute_transient_density_profile(positions_K, zlo=config['transient_density_profile']['zlo'], zhi=config['transient_density_profile']['zhi'], cross_sectional_area=box_size[0]*box_size[1], bin_width=config['transient_density_profile']['bin_width'], dt=config['dt'], plot=False)
+        bin_centers, density_profile_Cl, time = compute_transient_density_profile(positions_Cl, zlo=config['transient_density_profile']['zlo'], zhi=config['transient_density_profile']['zhi'], cross_sectional_area=box_size[0]*box_size[1], bin_width=config['transient_density_profile']['bin_width'], dt=config['dt'], plot=False)
     
     # collect densities for global averaging
     global_com_density.append(com_density)
