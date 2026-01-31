@@ -48,6 +48,9 @@ def compute_phase_shift(x_property: np.array, y_property: np.array, time: np.arr
 
         x_property_phase_shift.append(x_interp)
         y_property_phase_shift.append(y_interp)
+
+    x_property_phase_shift = np.array(x_property_phase_shift)
+    y_property_phase_shift = np.array(y_property_phase_shift)
     
     return x_property_phase_shift, y_property_phase_shift
 
