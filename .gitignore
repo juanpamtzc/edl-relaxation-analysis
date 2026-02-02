@@ -5,3 +5,13 @@ data/
 scratch/
 
 .DS_Store
+
+results/
+
+transient_edl/
+
+hysteresis_analysis.ipynb
+
+__pycache__
+
+*DS_Store*
